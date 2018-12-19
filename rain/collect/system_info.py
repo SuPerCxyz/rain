@@ -3,6 +3,7 @@
 
 import psutil
 
+
 class SystemInfo(object):
 
     def _get_memcache_info(self):
@@ -27,7 +28,7 @@ class SystemInfo(object):
         cpu_count = psutil.cpu_count()
         cpu_percent = psutil.cpu_percent(interval=1, percpu=True)
         cpu_percent_info = psutil.cpu_times_percent(interval=1, percpu=True)
-        cpu_info_dict =  {
+        cpu_info_dict = {
             'cpu_count': cpu_count,
             'cpu_percent': cpu_percent,
             'cpu_percent_info': cpu_percent_info
