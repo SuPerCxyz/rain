@@ -1,2 +1,2 @@
-# rain
+# Rain
 Simple linux monitoring
