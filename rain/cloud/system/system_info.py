@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+import json
 import time
 
-
+from getdevinfo import getdevinfo
 import psutil
 
 
@@ -51,11 +52,11 @@ class SystemInfo(object):
         """Collect memory and swap information and return dictionary type.
         """
         memcache_info = psutil.virtual_memory()
-        memcache_total = memcache_info.total/1024**2
-        memcache_used = memcache_info.used/1024**2
-        memcache_available = memcache_info.available/1024**2
-        memcache_buff = memcache_info.cached/1024**2
-        memcache_cached = memcache_info.cached/1024**2
+        memcache_total = memcache_info.total / 1024 ** 2
+        memcache_used = memcache_info.used / 1024 ** 2
+        memcache_available = memcache_info.available / 1024 ** 2
+        memcache_buff = memcache_info.cached / 1024 ** 2
+        memcache_cached = memcache_info.cached / 1024 ** 2
         memcache_percent = memcache_info.percent
         memcache_info_dict = {
             'memcache_total': memcache_total,
@@ -66,9 +67,76 @@ class SystemInfo(object):
             'memcache_percent': memcache_percent
         }
         return memcache_info_dict
+    
+    def byteify(self, input, encoding='utf-8'):
+        if isinstance(input, dict):
+            return {byteify(key): byteify(value) for key, value in input.iteritems()}
+        elif isinstance(input, list):
+            return [byteify(element) for element in input]
+        elif isinstance(input, unicode):
+            return input.encode(encoding)
+        else:
+            return input
+    
+    def _get_phy_disk(self, disk_info):
+        """Return to the physical disk dictionary,
+        each key corresponds to the disk Partitions.
+        """
+        physical_disk_dict = {}
+        for dev_name in disk_info.keys():
+            if disk_info[dev_name]['Type'] == 'Device' and \
+                'cdrom' not in str(disk_info[dev_name]):
+                physical_disk_dict[dev_name] = \
+                    disk_info[dev_name]['Partitions']
+        root_device = disk_info['/dev/mapper/centos-root']['HostDevice']
+        root_partition = disk_info['/dev/mapper/centos-root']['HostPartition']
+        index = physical_disk_dict[root_device].index(root_partition)
+        physical_disk_dict[root_device][index] = '/dev/mapper/centos-root'
+        physical_disk_dict = self.byteify(physical_disk_dict)
+        return physical_disk_dict
 
-    def get_disk_info(self, disk_list):
-        pass
+def get_disk_info(self, disk_list):
+    disk_info = []
+    all_dev_info = getdevinfo.get_info()
+    # {'/dev/sda': ['/dev/sda1', '/dev/sda2', '/dev/mapper/centos-root']}
+    physical_disk_dict = self._get_phy_disk(all_dev_info)
+    for physical_disk, disk_partitions in physical_disk_dict.items():
+        single_disk_info = {}
+        parts_info = []
+        disk_used = 0
+        disk_capacity = all_dev_info[physical_disk]['Capacity'].strip(' GB')
+        disk_product = all_dev_info[physical_disk]['Product']
+        for partitions in disk_partitions:
+            for psutil_partitions in psutil.disk_partitions():
+                if partitions == psutil_partitions.device and \
+                    'docker' not in psutil_partitions.mountpoint:
+                    part_mountpoint = psutil_partitions.mountpoint
+                    part_fstype = psutil_partitions.fstype
+                    part_opts = psutil_partitions.opts
+                    part_usage = psutil.disk_usage(part_mountpoint)
+                    part_total = part_usage.total
+                    part_used = part_usage.used
+                    part_free = part_usage.free
+                    part_percent = part_usage.percent
+                    GB = int(1024 ** 3)
+                    part_info = {
+                        'part_mountpoint': part_mountpoint,
+                        'part_fstype': part_fstype,
+                        'part_opts': part_opts,
+                        'part_total': part_total / GB,
+                        'part_used': part_used / GB,
+                        'part_percent': part_percent / GB
+                    }
+                    parts_info.append(part_info)
+        for part_count in parts_info:
+            disk_used += part_count['part_used']
+        single_disk_info['disk_capacity(GB)'] = disk_capacity
+        single_disk_info['disk_used(GB)'] = disk_used
+        single_disk_info['disk_percent'] = disk_used / int(disk_capacity)
+        single_disk_info['disk_product'] = disk_product
+        single_disk_info['disk_part_info'] = parts_info
+        disk_info.append(single_disk_info)
+    return disk_info
 
     def get_network_info(self, net_list=None):
         # Need to add multithreading
