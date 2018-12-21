@@ -165,3 +165,16 @@ class SystemInfo(object):
 
     def get_hostname(self):
         return socket.gethostname()
+
+    def get_user(self):
+        user_info_list = []
+        user_list = psutil.users()
+        for user in user_list:
+            user_dict = {}
+            user_dict['name'] = user.name
+            user_dict['host'] = user.host
+            time_local = time.localtime(user.started)
+            dt = time.strftime("%Y-%m-%d %H:%M:%S", time_local) 
+            user_dict['conn_time'] = dt
+            user_info_list.append(user_dict)
+        return user_info_list

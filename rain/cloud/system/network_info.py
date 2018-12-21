@@ -93,7 +93,7 @@ class NetworkInfo(object):
                             'pid': connect_info.pid,
                             'process_info': process_infos
                         }
-            connect_info_list.append(conn_info)
+                    connect_info_list.append(conn_info)
         return connect_info_list
 
     def _get_net_if_addrs(self):
