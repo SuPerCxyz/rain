@@ -174,7 +174,7 @@ class SystemInfo(object):
             user_dict['name'] = user.name
             user_dict['host'] = user.host
             time_local = time.localtime(user.started)
-            dt = time.strftime("%Y-%m-%d %H:%M:%S", time_local) 
+            dt = time.strftime("%Y-%m-%d %H:%M:%S", time_local)
             user_dict['conn_time'] = dt
             user_info_list.append(user_dict)
         return user_info_list
