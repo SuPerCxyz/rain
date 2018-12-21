@@ -1,1 +1,2 @@
 psutil==5.4.8 # BSD
+getdevinfo==1.0.4
