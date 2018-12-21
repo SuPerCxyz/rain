@@ -1,8 +1,5 @@
----
-typora-root-url: ./
----
-
 # Rain
-![logo](/logo.jpg)
+
+![logo](./logo.jpg)
 
 Simple linux monitoring
