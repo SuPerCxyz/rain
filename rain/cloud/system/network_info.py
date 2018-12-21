@@ -8,7 +8,7 @@ import psutil
 from process_info import ProcessInfo
 
 
-class PortInfo(object):
+class NetworkInfo(object):
     """System port information.
 
     Collect system port related information and return.
@@ -60,9 +60,11 @@ class PortInfo(object):
         """
         connect_info_list = []
         connect_info_list_raw = self._get_net_connections_info()
+        process_infos_list = ProcessInfo().get_process_info()
         for connect_info in connect_info_list_raw:
-            process_info = \
-                ProcessInfo().get_process_info(process_id=[connect_info.pid])
+            for process_infos in process_infos_list:
+                if connect_info.pid == process_infos['pid']:
+                    process_info = process_infos
             if connect_info.raddr:
                 conn_info = {
                     'local_addr': {
