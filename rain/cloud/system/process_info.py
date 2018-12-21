@@ -31,7 +31,7 @@ class ProcessInfo(object):
             process_infos.append(p_info)
         return process_infos
 
-    def get_process_info(self, process_name=None):
+    def get_process_info(self, process_name=None, process_id=None):
         """By default, all process information is returned. If the process
         name is passed in, the incoming process information is returned, and
         the type list is returned.
@@ -43,6 +43,12 @@ class ProcessInfo(object):
                 for p_info in process_infos:
                     if p_name.lower() in p_info['name'].lower():
                         process_info.append(p_info)
-        else:
+        if process_id:
+            for p_id in process_id:
+                for p_info in process_infos:
+                    if p_id == p_info['pid']:
+                        process_info.append(p_info)
+        if not process_name and not process_id:
             process_info = process_infos
+            return process_info
         return process_info

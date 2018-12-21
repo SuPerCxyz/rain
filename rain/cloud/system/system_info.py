@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 
 import json
+import socket
 import time
 
 from getdevinfo import getdevinfo
@@ -91,17 +92,22 @@ class SystemInfo(object):
                     and 'cdrom' not in str(disk_info[dev_name]):
                 physical_disk_dict[dev_name] = \
                     disk_info[dev_name]['Partitions']
-        root_device = disk_info['/dev/mapper/centos-root']['HostDevice']
-        root_partition = disk_info['/dev/mapper/centos-root']['HostPartition']
-        index = physical_disk_dict[root_device].index(root_partition)
-        physical_disk_dict[root_device][index] = '/dev/mapper/centos-root'
-        physical_disk_dict = self._byteify(physical_disk_dict)
+        try:
+            root_device = \
+                disk_info['/dev/mapper/centos-root']['HostDevice']
+            root_partition = \
+                disk_info['/dev/mapper/centos-root']['HostPartition']
+            index = physical_disk_dict[root_device].index(root_partition)
+            physical_disk_dict[root_device][index] = \
+                '/dev/mapper/centos-root'
+            physical_disk_dict = self._byteify(physical_disk_dict)
+        except KeyError:
+            pass
         return physical_disk_dict
 
-    def get_disk_info(self, disk_list):
-        """Get the physical hard disk information, and enter the hard disk
-        list, such as ['/dev/sda']. The return dictionary contains hard disk
-        usage information and partition information.
+    def get_disk_info(self):
+        """Get the physical hard disk information, The return dictionary
+        contains hard disk usage information and partition information.
         """
         # Need to add multi-threaded or asynchronous.
         disk_info = []
@@ -149,41 +155,6 @@ class SystemInfo(object):
             disk_info = self._byteify(disk_info)
         return disk_info
 
-    def get_network_info(self, net_list=None):
-        # Need to add multi-threaded or asynchronous.
-        if not net_list:
-            net_list = psutil.net_io_counters(pernic=True).keys()
-        net_infos = {}
-        net_info_s = []
-        total_recv = 0
-        total_sent = 0
-        time1_net = psutil.net_io_counters(pernic=True)
-        time.sleep(1)
-        time1_net = psutil.net_io_counters(pernic=True)
-        for net_card in net_list:
-            net_io_count_1 = time1_net[net_card]
-            r1 = net_io_count_1.bytes_recv
-            s1 = net_io_count_1.bytes_sent
-            net_io_count_2 = time1_net[net_card]
-            r2 = net_io_count_2.bytes_recv
-            s2 = net_io_count_2.bytes_sent
-            net_recv = (r2 - r1) / (1024 ** 2)
-            net_sent = (s2 - s1) / (1024 ** 2)
-            net_info = {
-                'net_card': net_card,
-                'net_recv(MB)': net_recv,
-                'net_sent(MB)': net_sent
-            }
-            total_recv += net_recv
-            total_sent += net_sent
-            net_info_s.append(net_info)
-        net_infos['single_flow'] = net_info_s
-        net_infos['total_flow'] = {
-            'total_recv(MB)': total_recv,
-            'total_sent(MB)': total_sent
-        }
-        return net_infos
-
     def get_boot_time(self):
         """Get system boot time and return.
         """
@@ -191,3 +162,6 @@ class SystemInfo(object):
         time_local = time.localtime(timestamp)
         dt = time.strftime("%Y-%m-%d %H:%M:%S", time_local)
         return dt
+
+    def get_hostname(self):
+        return socket.gethostname()
