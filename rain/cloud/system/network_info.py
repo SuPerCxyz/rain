@@ -61,36 +61,38 @@ class NetworkInfo(object):
         connect_info_list = []
         connect_info_list_raw = self._get_net_connections_info()
         process_infos_list = ProcessInfo().get_process_info()
+        # Traverse all connections.
         for connect_info in connect_info_list_raw:
+            # Traverse all processes.
             for process_infos in process_infos_list:
+                # Found with the same pid
                 if connect_info.pid == process_infos['pid']:
-                    process_info = process_infos
-            if connect_info.raddr:
-                conn_info = {
-                    'local_addr': {
-                        'ip': connect_info.laddr.ip,
-                        'port': connect_info.laddr.port
-                    },
-                    'remote_addr': {
-                        'ip': connect_info.raddr.ip,
-                        'port': connect_info.raddr.port
-                    },
-                    'status': connect_info.status,
-                    'pid': connect_info.pid,
-                    'process_info': process_info
-                }
-            else:
-                conn_info = {
-                    'local_addr': {
-                        'ip': connect_info.laddr.ip,
-                        'port': connect_info.laddr.port
-                    },
-                    'remote_addr': {
-                    },
-                    'status': connect_info.status,
-                    'pid': connect_info.pid,
-                    'process_info': process_info
-                }
+                    if connect_info.raddr:
+                        conn_info = {
+                            'local_addr': {
+                                'ip': connect_info.laddr.ip,
+                                'port': connect_info.laddr.port
+                            },
+                            'remote_addr': {
+                                'ip': connect_info.raddr.ip,
+                                'port': connect_info.raddr.port
+                            },
+                            'status': connect_info.status,
+                            'pid': connect_info.pid,
+                            'process_info': process_infos
+                        }
+                    else:
+                        conn_info = {
+                            'local_addr': {
+                                'ip': connect_info.laddr.ip,
+                                'port': connect_info.laddr.port
+                            },
+                            'remote_addr': {
+                            },
+                            'status': connect_info.status,
+                            'pid': connect_info.pid,
+                            'process_info': process_infos
+                        }
             connect_info_list.append(conn_info)
         return connect_info_list
 
@@ -119,3 +121,16 @@ class NetworkInfo(object):
             net_card_dict['card_info'] = single_net_card_list
             net_if_addrs.append(net_card_dict)
         return net_if_addrs
+
+    def get_net_port(self):
+        """List ip and port and other information.
+        """
+        port_info_list = []
+        net_connections_info = self.get_net_connections_info()
+        for net_port in net_connections_info:
+            port_info = {}
+            port_info['ip_port'] = net_port['local_addr']
+            port_info['process_name'] = net_port['process_info']['name']
+            port_info['pid'] = net_port['pid']
+            port_info_list.append(port_info)
+        return port_info_list
