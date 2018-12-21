@@ -103,6 +103,7 @@ class SystemInfo(object):
         list, such as ['/dev/sda']. The return dictionary contains hard disk
         usage information and partition information.
         """
+        # Need to add multi-threaded or asynchronous.
         disk_info = []
         # Get all device information.
         all_dev_info = getdevinfo.get_info()
@@ -113,6 +114,7 @@ class SystemInfo(object):
             single_disk_info = {}
             parts_info = []
             disk_used = 0
+            GB = int(1024 ** 3)
             disk_capacity = \
                 all_dev_info[physical_disk]['Capacity'].strip(' GB')
             disk_product = all_dev_info[physical_disk]['Product']
@@ -123,7 +125,6 @@ class SystemInfo(object):
                             'docker' not in psutil_partitions.mountpoint:
                         part_mountpoint = psutil_partitions.mountpoint
                         part_usage = psutil.disk_usage(part_mountpoint)
-                        GB = int(1024 ** 3)
                         part_info = {
                             'part_mountpoint': psutil_partitions.mountpoint,
                             'part_fstype': psutil_partitions.fstype,
@@ -149,19 +150,21 @@ class SystemInfo(object):
         return disk_info
 
     def get_network_info(self, net_list=None):
-        # Need to add multithreading
+        # Need to add multi-threaded or asynchronous.
         if not net_list:
             net_list = psutil.net_io_counters(pernic=True).keys()
         net_infos = {}
         net_info_s = []
         total_recv = 0
         total_sent = 0
+        time1_net = psutil.net_io_counters(pernic=True)
+        time.sleep(1)
+        time1_net = psutil.net_io_counters(pernic=True)
         for net_card in net_list:
-            net_io_count_1 = psutil.net_io_counters(pernic=True)[net_card]
+            net_io_count_1 = time1_net[net_card]
             r1 = net_io_count_1.bytes_recv
             s1 = net_io_count_1.bytes_sent
-            time.sleep(1)
-            net_io_count_2 = psutil.net_io_counters(pernic=True)[net_card]
+            net_io_count_2 = time1_net[net_card]
             r2 = net_io_count_2.bytes_recv
             s2 = net_io_count_2.bytes_sent
             net_recv = (r2 - r1) / (1024 ** 2)
