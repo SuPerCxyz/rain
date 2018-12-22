@@ -85,3 +85,19 @@ class DockerManage(object):
                 container_info = self._collect_container_info(containers_info)
                 container_info_list.append(container_info)
         return container_info_list
+
+    def get_images(self):
+        """Collect docker image info.
+        """
+        image_info_list = []
+        image_list = l_client.images(all=True)
+        for image in image_list:
+            image_info = {
+                'image_name':
+                    str(image['RepoTags'][0]).split('/')[-1].split(':')[0],
+                'image_create_time': self._str_time(image['Created']),
+                'image_id': str(image['Id']).split(':')[-1],
+                'image_size(MB)': image['Size'] / 1024 ** 2
+            }
+            image_info_list.append(image_info)
+        return image_info_list
