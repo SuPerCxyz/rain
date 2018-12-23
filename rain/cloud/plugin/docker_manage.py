@@ -33,6 +33,19 @@ class DockerManage(object):
         else:
             return input
 
+    def _unit_of_measurement(self, num):
+        lens = len(num)
+        if 0<lens<4:
+            return 'B'
+        elif 3<lens<7:
+            return 'KB'
+        elif 6<lens<10:
+            return 'MB'
+        elif 9<lens<13:
+            return 'GB'
+        elif 12<lens<16:
+            return 'TB'
+
     def _collect_container_info(self, container_info):
         """Organize and count container information.
         """
@@ -101,3 +114,23 @@ class DockerManage(object):
             }
             image_info_list.append(image_info)
         return image_info_list
+
+    def get_container_usage(self, container_name=None):
+        container_info = l_client.stats(container_name)
+        old_result = eval(container_info.next())
+        new_result = eval(container_info.next())
+        container_info.close()
+        cpu_count = len(old_result['cpu_stats']['cpu_usage']['percpu_usage'])
+        mem_usage = new_result['memory_stats']['usage']
+        container_usage = {}
+        container_usage['cpu_total_usage'] = \
+            new_result['cpu_stats']['cpu_usage']['total_usage'] - \
+            old_result['cpu_stats']['cpu_usage']['total_usage']
+        container_usage['cpu_system_usage'] = \
+            new_result['cpu_stats']['system_cpu_usage'] - \
+            old_result['cpu_stats']['system_cpu_usage']
+        container_usage['cpu_percent'] = round(
+            float(container_usage['cpu_total_usage']) /
+            float(container_usage['cpu_system_usage']) *cpu_count * 100.0, 2)
+        container_usage['mem_usage'] = mem_usage + \
+            self._unit_of_measurement(mem_usage)
