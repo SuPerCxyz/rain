@@ -5,7 +5,7 @@ import time
 
 import psutil
 
-from process_info import ProcessInfo
+from rain.cloud.system.process_info import ProcessInfo
 
 
 class NetworkInfo(object):
@@ -14,13 +14,13 @@ class NetworkInfo(object):
     Collect system port related information and return.
     """
 
-    def get_network_flow_info(self, net_list=None):
+    def get_network_traffic_info(self, net_list=None):
         """Collect network traffic information
         """
         # Need to add multi-threaded or asynchronous.
         if not net_list:
             net_list = psutil.net_io_counters(pernic=True).keys()
-        net_flow_infos = {}
+        net_traffic_infos = {}
         net_info_s = []
         total_recv = 0
         total_sent = 0
@@ -44,12 +44,12 @@ class NetworkInfo(object):
             total_recv += net_recv
             total_sent += net_sent
             net_info_s.append(net_info)
-        net_flow_infos['single_flow'] = net_info_s
-        net_flow_infos['total_flow'] = {
+        net_traffic_infos['single_traffic'] = net_info_s
+        net_traffic_infos['total_traffic'] = {
             'total_recv(MB)': total_recv,
             'total_sent(MB)': total_sent
         }
-        return net_flow_infos
+        return net_traffic_infos
 
     def _get_net_connections_info(self):
         connect_info = psutil.net_connections()

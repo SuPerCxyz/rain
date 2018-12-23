@@ -8,6 +8,7 @@ import time
 from getdevinfo import getdevinfo
 import psutil
 
+from rain.common import utils
 
 class SystemInfo(object):
     """system information.
@@ -71,17 +72,6 @@ class SystemInfo(object):
         }
         return memcache_info_dict
 
-    def _byteify(self, input, encoding='utf-8'):
-        if isinstance(input, dict):
-            return {self._byteify(key): self._byteify(value)
-                    for key, value in input.iteritems()}
-        elif isinstance(input, list):
-            return [self._byteify(element) for element in input]
-        elif isinstance(input, unicode):
-            return input.encode(encoding)
-        else:
-            return input
-
     def _get_phy_disk(self, disk_info):
         """Return to the physical disk dictionary,
         each key corresponds to the disk Partitions.
@@ -100,7 +90,7 @@ class SystemInfo(object):
             index = physical_disk_dict[root_device].index(root_partition)
             physical_disk_dict[root_device][index] = \
                 '/dev/mapper/centos-root'
-            physical_disk_dict = self._byteify(physical_disk_dict)
+            physical_disk_dict = utils.byteify(physical_disk_dict)
         except KeyError:
             pass
         return physical_disk_dict
@@ -152,7 +142,7 @@ class SystemInfo(object):
             single_disk_info['disk_product'] = disk_product
             single_disk_info['disk_part_info'] = parts_info
             disk_info.append(single_disk_info)
-            disk_info = self._byteify(disk_info)
+            disk_info = utils.byteify(disk_info)
         return disk_info
 
     def get_boot_time(self):
