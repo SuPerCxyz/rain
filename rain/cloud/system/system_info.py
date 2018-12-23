@@ -2,13 +2,14 @@
 # -*- coding:utf-8 -*-
 
 import json
-import socket
+import platform
 import time
 
-from getdevinfo import getdevinfo
 import psutil
+from getdevinfo import getdevinfo
 
 from rain.common import utils
+
 
 class SystemInfo(object):
     """system information.
@@ -30,9 +31,12 @@ class SystemInfo(object):
             sys_load_5 = round(float(load_5)/cpu_count * 100, 2)
             sys_load_15 = round(float(load_15)/cpu_count * 100, 2)
             system_load = {
-                'sys_load_1': sys_load_1,
-                'sys_load_5': sys_load_5,
-                'sys_load_15': sys_load_15
+                'sys_load_1(%)': sys_load_1,
+                'sys_load_5(%)': sys_load_5,
+                'sys_load_15(%)': sys_load_15,
+                'load_1': load_1,
+                'load_5': load_5,
+                'load_15': load_15
             }
             return system_load
 
@@ -63,12 +67,12 @@ class SystemInfo(object):
         memcache_cached = memcache_info.cached / 1024 ** 2
         memcache_percent = memcache_info.percent
         memcache_info_dict = {
-            'memcache_total': memcache_total,
-            'memcache_used': memcache_used,
-            'memcache_available': memcache_available,
-            'memcache_buff': memcache_buff,
-            'memcache_cached': memcache_cached,
-            'memcache_percent': memcache_percent
+            'memcache_total(MB)': memcache_total,
+            'memcache_used(MB)': memcache_used,
+            'memcache_available(MB)': memcache_available,
+            'memcache_buff(MB)': memcache_buff,
+            'memcache_cached(MB)': memcache_cached,
+            'memcache_percent(%)': memcache_percent
         }
         return memcache_info_dict
 
@@ -145,26 +149,27 @@ class SystemInfo(object):
     #         disk_info = utils.byteify(disk_info)
     #     return disk_info
 
-    def get_boot_time(self):
-        """Get system boot time and return.
+    def _get_user(self):
+        """Collect login user information.
         """
-        timestamp = psutil.boot_time()
-        time_local = time.localtime(timestamp)
-        dt = time.strftime("%Y-%m-%d %H:%M:%S", time_local)
-        return dt
-
-    def get_hostname(self):
-        return socket.gethostname()
-
-    def get_user(self):
         user_info_list = []
         user_list = psutil.users()
         for user in user_list:
             user_dict = {}
             user_dict['name'] = user.name
             user_dict['host'] = user.host
-            time_local = time.localtime(user.started)
-            dt = time.strftime("%Y-%m-%d %H:%M:%S", time_local)
-            user_dict['conn_time'] = dt
+            user_dict['conn_time'] = utils.str_time(user.started)
             user_info_list.append(user_dict)
         return user_info_list
+
+    def get_system_info(self):
+        """Collect system information.
+        """
+        system_info = {}
+        system_info['python_version'] = platform.python_version()
+        system_info['hostname'] = platform.node()
+        system_info['system_info'] = platform.platform()
+        system_info['boot_time'] = utils.str_time(psutil.boot_time())
+        system_info['time'] = time.asctime(time.localtime(time.time()))
+        system_info['user'] = self._get_user()
+        return system_info
