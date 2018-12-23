@@ -5,6 +5,8 @@ import time
 
 import docker
 
+from rain.common import utils
+
 client = docker.DockerClient(base_url='unix://var/run/docker.sock')
 l_client = docker.APIClient(base_url='unix://var/run/docker.sock')
 
@@ -15,41 +17,10 @@ class DockerManage(object):
     Manage the docker container, mirror and get some information.
     """
 
-    def _str_time(self, timestamp):
-        time_local = time.localtime(timestamp)
-        dt = time.strftime("%Y-%m-%d %H:%M:%S", time_local)
-        return dt
-
-    def _byteify(self, input, encoding='utf-8'):
-        """unicode to str.
-        """
-        if isinstance(input, dict):
-            return {self._byteify(key): self._byteify(value)
-                    for key, value in input.iteritems()}
-        elif isinstance(input, list):
-            return [self._byteify(element) for element in input]
-        elif isinstance(input, unicode):
-            return input.encode(encoding)
-        else:
-            return input
-
-    def _unit_of_measurement(self, num):
-        lens = len(num)
-        if 0<lens<4:
-            return 'B'
-        elif 3<lens<7:
-            return 'KB'
-        elif 6<lens<10:
-            return 'MB'
-        elif 9<lens<13:
-            return 'GB'
-        elif 12<lens<16:
-            return 'TB'
-
     def _collect_container_info(self, container_info):
         """Organize and count container information.
         """
-        container_info = self._byteify(container_info)
+        container_info = utils.byteify(container_info)
         # collect mount info.
         container_mount = []
         for mount_info in container_info['Mounts']:
@@ -68,7 +39,7 @@ class DockerManage(object):
         container_net_info['links'] = simple_net_info['Links']
         # summary info.
         container_info_dict = {
-            'created': self._str_time(container_info['Created']),
+            'created': utils.str_time(container_info['Created']),
             'container_name': container_info['Names'][0].lstrip('/'),
             'container_status': container_info['State'],
             'container_up_time': container_info['Status'],
@@ -76,13 +47,16 @@ class DockerManage(object):
             'container_image': container_info['Image'],
             'container_mount_info': container_mount,
             'container_port_info': container_info['Ports'],
-            'container_net_info': container_net_info
+            'container_net_info': container_net_info,
+            'container_usage': self.get_container_usage(
+                container_info['Names'][0].lstrip('/'))
         }
         return container_info_dict
 
     def get_containers_info(self, containers_name=None):
         """Query container information.
         """
+        # Need to add multithreading.
         container_info_list = []
         containers_info_list = l_client.containers(all=True)
         if containers_name:
@@ -108,7 +82,7 @@ class DockerManage(object):
             image_info = {
                 'image_name':
                     str(image['RepoTags'][0]).split('/')[-1].split(':')[0],
-                'image_create_time': self._str_time(image['Created']),
+                'image_create_time': utils.str_time(image['Created']),
                 'image_id': str(image['Id']).split(':')[-1],
                 'image_size(MB)': image['Size'] / 1024 ** 2
             }
@@ -116,12 +90,28 @@ class DockerManage(object):
         return image_info_list
 
     def get_container_usage(self, container_name=None):
+        """Collect container resource usage.
+        """
         container_info = l_client.stats(container_name)
         old_result = eval(container_info.next())
         new_result = eval(container_info.next())
         container_info.close()
         cpu_count = len(old_result['cpu_stats']['cpu_usage']['percpu_usage'])
         mem_usage = new_result['memory_stats']['usage']
+        mem_limit = new_result['memory_stats']['limit']
+        mem_per = round(float(mem_usage) / float(mem_limit) * 100.0, 2)
+        nets_info = []
+        for net in new_result['networks'].keys():
+            net_info = {}
+            net_rx = (new_result['networks'][net]['rx_bytes'] / 8) - \
+                (old_result['networks'][net]['rx_bytes'] / 8)
+            net_tx = (new_result['networks'][net]['tx_bytes'] / 8) - \
+                (old_result['networks'][net]['tx_bytes'] / 8)
+            net_info[net] = {
+                'net_rx(B)': net_rx,
+                'net_tx(B)': net_tx
+            }
+            nets_info.append(net_info)
         container_usage = {}
         container_usage['cpu_total_usage'] = \
             new_result['cpu_stats']['cpu_usage']['total_usage'] - \
@@ -131,6 +121,9 @@ class DockerManage(object):
             old_result['cpu_stats']['system_cpu_usage']
         container_usage['cpu_percent'] = round(
             float(container_usage['cpu_total_usage']) /
-            float(container_usage['cpu_system_usage']) *cpu_count * 100.0, 2)
-        container_usage['mem_usage'] = mem_usage + \
-            self._unit_of_measurement(mem_usage)
+            float(container_usage['cpu_system_usage']) * cpu_count * 100.0, 2)
+        container_usage['mem_usage(B)'] = mem_usage
+        container_usage['mem_limit(B)'] = mem_limit
+        container_usage['mem_per'] = mem_per
+        container_usage['nets_traffic'] = nets_info
+        return container_usage
