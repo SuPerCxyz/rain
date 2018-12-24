@@ -6,8 +6,9 @@ import psutil
 
 from rain.common import utils
 
+
 class DiskInfo(object):
-    """
+    """Collect hard drive information and usage.
     """
 
     def _get_phy_disk(self, disk_info):
@@ -63,22 +64,24 @@ class DiskInfo(object):
                             'part_mountpoint': psutil_partitions.mountpoint,
                             'part_fstype': psutil_partitions.fstype,
                             'part_opts': psutil_partitions.opts,
-                            'part_total': part_usage.total / GB,
-                            'part_used': part_usage.used / GB,
-                            'part_free': part_usage.free / GB,
-                            'part_percent': part_usage.percent / GB
+                            'part_total(GB)': part_usage.total / GB,
+                            'part_used(GB)': part_usage.used / GB,
+                            'part_free(GB)': part_usage.free / GB,
+                            'part_percent(%)': part_usage.percent,
                         }
                         parts_info.append(part_info)
             # Count the space used by a single disk.
             for part_count in parts_info:
-                disk_used += part_count['part_used']
-            single_disk_info['disk_capacity(GB)'] = disk_capacity
-            single_disk_info['disk_used(GB)'] = disk_used
+                disk_used += part_count['part_used(GB)']
             disk_percent = format(float(disk_used)/float(
                 disk_capacity), '.2f')
-            single_disk_info['disk_percent'] = disk_percent
-            single_disk_info['disk_product'] = disk_product
-            single_disk_info['disk_part_info'] = parts_info
+            single_disk_info = {
+                'disk_capacity(GB)': disk_capacity,
+                'disk_used(GB)': disk_used,
+                'disk_percent(%)': float(disk_percent) * 100,
+                'disk_product': disk_product,
+                'disk_part_info': parts_info,
+            }
             disk_info.append(single_disk_info)
             disk_info = utils.byteify(disk_info)
         return disk_info
