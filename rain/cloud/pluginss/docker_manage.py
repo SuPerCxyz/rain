@@ -29,15 +29,21 @@ class DockerManage(object):
             mount['Source'] = mount_info['Source']
             container_mount.append(mount)
         # collect network info.
-        container_net_info = {}
         simple_net_info = \
             container_info['NetworkSettings']['Networks']['bridge']
-        container_net_info['ip'] = simple_net_info['IPAddress']
-        container_net_info['gateway'] = simple_net_info['Gateway']
-        container_net_info['netmask'] = simple_net_info['IPPrefixLen']
-        container_net_info['macaddress'] = simple_net_info['MacAddress']
-        container_net_info['links'] = simple_net_info['Links']
+        container_net_info = {
+            'ip': simple_net_info['IPAddress'],
+            'gateway': simple_net_info['Gateway'],
+            'netmask': simple_net_info['IPPrefixLen'],
+            'macaddress': simple_net_info['MacAddress'],
+            'links': simple_net_info['Links'],
+        }
         # summary info.
+        if container_info['State'] == 'running':
+            container_usage = self._get_container_usage(
+                container_info['Names'][0].lstrip('/'))
+        else:
+            container_usage = {}
         container_info_dict = {
             'created': utils.str_time(container_info['Created']),
             'container_name': container_info['Names'][0].lstrip('/'),
@@ -48,8 +54,7 @@ class DockerManage(object):
             'container_mount_info': container_mount,
             'container_port_info': container_info['Ports'],
             'container_net_info': container_net_info,
-            'container_usage': self.get_container_usage(
-                container_info['Names'][0].lstrip('/'))
+            'container_usage': container_usage,
         }
         return container_info_dict
 
@@ -89,7 +94,7 @@ class DockerManage(object):
             image_info_list.append(image_info)
         return image_info_list
 
-    def get_container_usage(self, container_name=None):
+    def _get_container_usage(self, container_name=None):
         """Collect container resource usage.
         """
         container_info = l_client.stats(container_name)
@@ -112,18 +117,25 @@ class DockerManage(object):
                 'net_tx(B)': net_tx
             }
             nets_info.append(net_info)
-        container_usage = {}
-        container_usage['cpu_total_usage'] = \
+        cpu_total_usage = \
             new_result['cpu_stats']['cpu_usage']['total_usage'] - \
             old_result['cpu_stats']['cpu_usage']['total_usage']
-        container_usage['cpu_system_usage'] = \
+        cpu_system_usage = \
             new_result['cpu_stats']['system_cpu_usage'] - \
             old_result['cpu_stats']['system_cpu_usage']
-        container_usage['cpu_percent'] = round(
-            float(container_usage['cpu_total_usage']) /
-            float(container_usage['cpu_system_usage']) * cpu_count * 100.0, 2)
-        container_usage['mem_usage(B)'] = mem_usage
-        container_usage['mem_limit(B)'] = mem_limit
-        container_usage['mem_per'] = mem_per
-        container_usage['nets_traffic'] = nets_info
+        container_usage = {
+            'cpu_total_usage':
+                new_result['cpu_stats']['cpu_usage']['total_usage'] -
+                old_result['cpu_stats']['cpu_usage']['total_usage'],
+            'cpu_system_usage':
+                new_result['cpu_stats']['system_cpu_usage'] -
+                old_result['cpu_stats']['system_cpu_usage'],
+            'cpu_percent': round(
+                float(cpu_total_usage) / float(cpu_system_usage) *
+                cpu_count * 100.0, 2),
+            'mem_usage(B)': mem_usage,
+            'mem_limit(B)': mem_limit,
+            'mem_per': mem_per,
+            'nets_traffic': nets_info,
+        }
         return container_usage
