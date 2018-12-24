@@ -5,8 +5,8 @@ import json
 import platform
 import time
 
-import psutil
 from getdevinfo import getdevinfo
+import psutil
 
 from rain.common import utils
 

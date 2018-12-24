@@ -128,9 +128,10 @@ class NetworkInfo(object):
         port_info_list = []
         net_connections_info = self.get_net_connections_info()
         for net_port in net_connections_info:
-            port_info = {}
-            port_info['ip_port'] = net_port['local_addr']
-            port_info['process_name'] = net_port['process_info']['name']
-            port_info['pid'] = net_port['pid']
+            port_info = {
+                'ip_port': net_port['local_addr'],
+                'process_name': net_port['process_info']['name'],
+                'pid': net_port['pid'],
+            }
             port_info_list.append(port_info)
         return port_info_list
