@@ -6,6 +6,9 @@ import time
 import psutil
 
 from rain.cloud.system.process import ProcessInfo
+from rain.config.cloud.system import network_conf
+
+CONF = network_conf.CONF
 
 
 class NetworkInfo(object):
@@ -14,10 +17,11 @@ class NetworkInfo(object):
     Collect system port related information and return.
     """
 
-    def get_network_traffic_info(self, net_list=None):
+    def get_network_traffic_info(self):
         """Collect network traffic information
         """
         # Need to add multi-threaded or asynchronous.
+        net_list = CONF.network_info.net_list
         if not net_list:
             net_list = psutil.net_io_counters(pernic=True).keys()
         net_traffic_infos = {}
@@ -55,9 +59,10 @@ class NetworkInfo(object):
         connect_info = psutil.net_connections()
         return connect_info
 
-    def get_net_connections_info(self, detail=False):
+    def get_net_connections_info(self):
         """Collect network connection information.
         """
+        conn_proc_detail = CONF.network_info.conn_proc_detail
         connect_info_list = []
         connect_info_list_raw = self._get_net_connections_info()
         process_infos_list = ProcessInfo().get_process_info()
@@ -82,7 +87,7 @@ class NetworkInfo(object):
                             'ip': connect_info.raddr.ip,
                             'port': connect_info.raddr.port
                         }
-                    if detail:
+                    if conn_proc_detail:
                         conn_info['process_info'] = process_infos
                     connect_info_list.append(conn_info)
         return connect_info_list
@@ -116,13 +121,15 @@ class NetworkInfo(object):
     def get_net_port(self):
         """List ip and port and other information.
         """
+        port_proc_detail = CONF.network_info.port_proc_detail
         port_info_list = []
         net_connections_info = self.get_net_connections_info()
         for net_port in net_connections_info:
             port_info = {
                 'ip_port': net_port['local_addr'],
-                # 'process_name': net_port['process_info']['name'],
                 'pid': net_port['pid'],
             }
+            if port_proc_detail:
+                port_info['process_name'] = net_port['process_info']['name']
             port_info_list.append(port_info)
         return port_info_list

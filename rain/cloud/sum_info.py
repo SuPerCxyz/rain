@@ -6,6 +6,9 @@ from rain.cloud.system.disk import DiskInfo
 from rain.cloud.system.network import NetworkInfo
 from rain.cloud.system.process import ProcessInfo
 from rain.cloud.system.system import SystemInfo
+from rain.config.cloud import sum_info_conf
+
+CONF = sum_info_conf.CONF
 
 
 class SumInfo(object):
@@ -44,15 +47,17 @@ class SumInfo(object):
         """
         net_class = NetworkInfo()
         net_traffic_info = net_class.get_network_traffic_info()
-        net_conn_info = net_class.get_net_connections_info()
         net_ip_info = net_class.get_net_if_addrs()
-        net_port_info = net_class.get_net_port()
         net_info = {
             'network_traffic': net_traffic_info,
-            'connections': net_conn_info,
             'ip_address': net_ip_info,
-            'network_port': net_port_info,
         }
+        if CONF.sum_info.network_conn_info:
+            net_conn_info = net_class.get_net_connections_info()
+            net_info['connections'] = net_conn_info
+        if CONF.sum_info.network_port:
+            net_port_info = net_class.get_net_port()
+            net_info['network_port'] = net_port_info
         return net_info
 
     def sum_process(self):
@@ -82,11 +87,16 @@ class SumInfo(object):
     def sum_info(self):
         """Summary information.
         """
-        server_info = {
-            'docker_info': self.sum_docker(),
-            'disk_info': self.sum_disk(),
-            'network_info': self.sum_network(),
-            'process_info': self.sum_process(),
-            'system_info': self.sum_system()
-        }
+        server_info = {}
+        collect_list = CONF.sum_info.collect_list
+        if 'docker' in collect_list:
+            server_info['docker_info'] = self.sum_docker()
+        if 'disk' in collect_list:
+            server_info['disk_info'] = self.sum_disk()
+        if 'network' in collect_list:
+            server_info['network_info'] = self.sum_network()
+        if 'process' in collect_list:
+            server_info['process_info'] = self.sum_process()
+        if 'system' in collect_list:
+            server_info['system_inf'] = self.sum_system()
         return server_info

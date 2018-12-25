@@ -6,6 +6,9 @@ import time
 import psutil
 
 from rain.common import utils
+from rain.config.cloud.system import process_conf
+
+CONF = process_conf.CONF
 
 
 class ProcessInfo(object):
@@ -38,14 +41,14 @@ class ProcessInfo(object):
             process_infos.append(p_info)
         return process_infos
 
-    def get_process_info(self, process_name=None, process_id=None,
-                         detail=False):
+    def get_process_info(self, process_name=None, process_id=None):
         """By default, all process information is returned. If the process
         name is passed in, the incoming process information is returned, and
         the type list is returned.
         """
+        proc_detail = CONF.process_info.proc_detail
         process_info = []
-        process_infos = self._get_process_info(detail)
+        process_infos = self._get_process_info(proc_detail)
         if process_name:
             for p_name in process_name:
                 for p_info in process_infos:
