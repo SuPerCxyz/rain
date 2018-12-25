@@ -5,7 +5,7 @@ import time
 
 import psutil
 
-from rain.cloud.system.process_info import ProcessInfo
+from rain.cloud.system.process import ProcessInfo
 
 
 class NetworkInfo(object):

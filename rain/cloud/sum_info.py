@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from rain.cloud.pluginss.docker_manage import DockerManage
-from rain.cloud.system.disk_info import DiskInfo
-from rain.cloud.system.network_info import NetworkInfo
-from rain.cloud.system.process_info import ProcessInfo
-from rain.cloud.system.system_info import SystemInfo
+from rain.cloud.pluginss.docker_im import DockerManage
+from rain.cloud.system.disk import DiskInfo
+from rain.cloud.system.network import NetworkInfo
+from rain.cloud.system.process import ProcessInfo
+from rain.cloud.system.system import SystemInfo
 
 
 class SumInfo(object):
