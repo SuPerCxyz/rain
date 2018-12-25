@@ -84,7 +84,7 @@ class SumInfo(object):
         """
         server_info = {
             'docker_info': self.sum_docker(),
-            # 'disk_info': self.sum_disk(),
+            'disk_info': self.sum_disk(),
             'network_info': self.sum_network(),
             'process_info': self.sum_process(),
             'system_info': self.sum_system()
