@@ -3,10 +3,9 @@
 
 from oslo_config import cfg
 
-
 network_info = cfg.OptGroup(name='network_info',
-                   title='Network options',
-                   help='network.py script configuration.')
+                            title='Network options',
+                            help='network.py script configuration.')
 
 network_info_opts = [
     cfg.ListOpt('net_list',

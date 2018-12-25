@@ -3,10 +3,9 @@
 
 from oslo_config import cfg
 
-
 process_info = cfg.OptGroup(name='process_info',
-                   title='Process options',
-                   help='process.py script configuration.')
+                            title='Process options',
+                            help='process.py script configuration.')
 
 process_info_opts = [
     cfg.BoolOpt('proc_detail',

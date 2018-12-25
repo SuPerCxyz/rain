@@ -3,10 +3,9 @@
 
 from oslo_config import cfg
 
-
 sum_info = cfg.OptGroup(name='sum_info',
-                   title='Sum options',
-                   help="""
+                        title='Sum options',
+                        help="""
 sum_info.py script configuration.
 """)
 

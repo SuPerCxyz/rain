@@ -3,10 +3,9 @@
 
 from oslo_config import cfg
 
-
 disk_info = cfg.OptGroup(name='disk_info',
-                   title='Disk information options',
-                   help="""
+                         title='Disk information options',
+                         help="""
 disk.py script configuration.
 """)
 
