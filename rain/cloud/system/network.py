@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+import re
 import time
 
 import psutil
@@ -77,10 +78,11 @@ class NetworkInfo(object):
                             'ip': connect_info.laddr.ip,
                             'port': connect_info.laddr.port
                         },
-                        'remote_addr': {
-                        },
+                        'remote_addr': {},
                         'status': connect_info.status,
                         'pid': connect_info.pid,
+                        'remote_addr': {},
+                        'process_info': {},
                     }
                     if connect_info.raddr:
                         conn_info['remote_addr'] = {
@@ -101,7 +103,12 @@ class NetworkInfo(object):
         """
         net_if_addrs = []
         net_if_addr_dict = self._get_net_if_addrs()
-        for net_card in net_if_addr_dict.keys():
+
+        net_card_list = CONF.network_info.net_list
+        net_card_name_list = net_if_addr_dict.keys()
+        if net_card_list:
+            net_card_name_list = net_card_list
+        for net_card in net_card_name_list:
             net_card_dict = {}
             single_net_card_list = []
             net_card_infos = net_if_addr_dict[net_card]
@@ -112,7 +119,10 @@ class NetworkInfo(object):
                     'broadcast': net_card_info.broadcast,
                     'ptp': net_card_info.ptp
                 }
-                single_net_card_list.append(single_net_card)
+                if not re.match(
+                        r"^\s*([0-9a-fA-F]{2,2}:){5,5}[0-9a-fA-F]{2,2}\s*$",
+                        net_card_info.address):
+                    single_net_card_list.append(single_net_card)
             net_card_dict['net_card'] = net_card
             net_card_dict['card_info'] = single_net_card_list
             net_if_addrs.append(net_card_dict)
@@ -128,6 +138,7 @@ class NetworkInfo(object):
             port_info = {
                 'ip_port': net_port['local_addr'],
                 'pid': net_port['pid'],
+                'process_name': {},
             }
             if port_proc_detail:
                 port_info['process_name'] = net_port['process_info']['name']

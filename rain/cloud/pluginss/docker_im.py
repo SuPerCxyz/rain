@@ -6,7 +6,9 @@ import time
 import docker
 
 from rain.common import utils
+from rain.config.cloud.pluginss import docker_conf
 
+CONF = docker_conf.CONF
 client = docker.DockerClient(base_url='unix://var/run/docker.sock')
 l_client = docker.APIClient(base_url='unix://var/run/docker.sock')
 
@@ -29,19 +31,25 @@ class DockerManage(object):
             mount['Source'] = mount_info['Source']
             container_mount.append(mount)
         # collect network info.
-        simple_net_info = \
-            container_info['NetworkSettings']['Networks']['bridge']
-        container_net_info = {
-            'ip': simple_net_info['IPAddress'],
-            'gateway': simple_net_info['Gateway'],
-            'netmask': simple_net_info['IPPrefixLen'],
-            'macaddress': simple_net_info['MacAddress'],
-            'links': simple_net_info['Links'],
-        }
+        if CONF.docker_info.docker_net_info_detail:
+            simple_net_info = \
+                container_info['NetworkSettings']['Networks']['bridge']
+            container_net_info = {
+                'ip': simple_net_info['IPAddress'],
+                'gateway': simple_net_info['Gateway'],
+                'netmask': simple_net_info['IPPrefixLen'],
+                'macaddress': simple_net_info['MacAddress'],
+                'links': simple_net_info['Links'],
+            }
+        else:
+            container_net_info = {}
         # summary info.
-        if container_info['State'] == 'running':
-            container_usage = self._get_container_usage(
-                container_info['Names'][0].lstrip('/'))
+        if CONF.docker_info.docker_usage_info_detail:
+            if container_info['State'] == 'running':
+                container_usage = self._get_container_usage(
+                    container_info['Names'][0].lstrip('/'))
+            else:
+                container_usage = {}
         else:
             container_usage = {}
         container_info_dict = {
