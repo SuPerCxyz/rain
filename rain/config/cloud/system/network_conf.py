@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+import os
+
 from oslo_config import cfg
+
+path = os.getcwd()
 
 network_info = cfg.OptGroup(name='network_info',
                             title='Network options',
@@ -27,5 +31,5 @@ CONF = cfg.CONF
 CONF.register_group(network_info)
 CONF.register_opts(network_info_opts, network_info)
 CONF(default_config_files=[
-    '/home/superc/file/python/rain/rain/config/rain.conf'
+    path + '/rain/config/rain.conf'
 ])

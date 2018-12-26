@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+import os
+
 from oslo_config import cfg
+
+path = os.getcwd()
 
 process_info = cfg.OptGroup(name='process_info',
                             title='Process options',
@@ -19,5 +23,5 @@ CONF = cfg.CONF
 CONF.register_group(process_info)
 CONF.register_opts(process_info_opts, process_info)
 CONF(default_config_files=[
-    '/home/superc/file/python/rain/rain/config/rain.conf'
+    path + '/rain/config/rain.conf'
 ])

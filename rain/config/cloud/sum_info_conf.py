@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+import os
+
 from oslo_config import cfg
+
+path = os.getcwd()
 
 sum_info = cfg.OptGroup(name='sum_info',
                         title='Sum options',
@@ -25,5 +29,5 @@ CONF = cfg.CONF
 CONF.register_group(sum_info)
 CONF.register_opts(sum_info_opts, sum_info)
 CONF(default_config_files=[
-    '/home/superc/file/python/rain/rain/config/rain.conf'
+    path + '/rain/config/rain.conf'
 ])
