@@ -7,9 +7,11 @@ import time
 import psutil
 
 from rain.cloud.system.process import ProcessInfo
+from rain.common import rain_log
 from rain.config.cloud.system import network_conf
 
 CONF = network_conf.CONF
+logger = rain_log.logger
 
 
 class NetworkInfo(object):
@@ -24,6 +26,8 @@ class NetworkInfo(object):
         # Need to add multi-threaded or asynchronous.
         net_list = CONF.network_info.net_list
         if not net_list:
+            logger.debug('No incoming network card list, all network cards '
+                         'are collected.')
             net_list = psutil.net_io_counters(pernic=True).keys()
         net_traffic_infos = {}
         net_info_s = []
@@ -54,6 +58,7 @@ class NetworkInfo(object):
             'total_recv(MB)': total_recv,
             'total_sent(MB)': total_sent
         }
+        logger.info('Collect network card traffic infomartion.')
         return net_traffic_infos
 
     def _get_net_connections_info(self):
@@ -90,8 +95,10 @@ class NetworkInfo(object):
                             'port': connect_info.raddr.port
                         }
                     if conn_proc_detail:
+                        logger.debug('Collect network process information.')
                         conn_info['process_info'] = process_infos
                     connect_info_list.append(conn_info)
+        logger.info('Collect network card connection infomartion.')
         return connect_info_list
 
     def _get_net_if_addrs(self):
@@ -107,6 +114,8 @@ class NetworkInfo(object):
         net_card_list = CONF.network_info.net_list
         net_card_name_list = net_if_addr_dict.keys()
         if net_card_list:
+            logger.debug('Incoming network card list, collecting network card'
+                         'address information in all network card lists.')
             net_card_name_list = net_card_list
         for net_card in net_card_name_list:
             net_card_dict = {}
@@ -126,6 +135,7 @@ class NetworkInfo(object):
             net_card_dict['net_card'] = net_card
             net_card_dict['card_info'] = single_net_card_list
             net_if_addrs.append(net_card_dict)
+        logger.info('Collect network card address infomartion')
         return net_if_addrs
 
     def get_net_port(self):
@@ -141,6 +151,8 @@ class NetworkInfo(object):
                 'process_name': {},
             }
             if port_proc_detail:
+                logger.debug('Collect port corresponding process information.')
                 port_info['process_name'] = net_port['process_info']['name']
             port_info_list.append(port_info)
+        logger.info('Collect network card port use infomartion.')
         return port_info_list

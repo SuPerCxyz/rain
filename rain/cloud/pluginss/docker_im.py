@@ -5,12 +5,14 @@ import time
 
 import docker
 
+from rain.common import rain_log
 from rain.common import utils
 from rain.config.cloud.pluginss import docker_conf
 
 CONF = docker_conf.CONF
 client = docker.DockerClient(base_url='unix://var/run/docker.sock')
 l_client = docker.APIClient(base_url='unix://var/run/docker.sock')
+logger = rain_log.logger
 
 
 class DockerManage(object):
@@ -32,6 +34,7 @@ class DockerManage(object):
             container_mount.append(mount)
         # collect network info.
         if CONF.docker_info.docker_net_info_detail:
+            logger.debug('Get container network usage details.')
             simple_net_info = \
                 container_info['NetworkSettings']['Networks']['bridge']
             container_net_info = {
@@ -46,6 +49,7 @@ class DockerManage(object):
         # summary info.
         if CONF.docker_info.docker_usage_info_detail:
             if container_info['State'] == 'running':
+                logger.debug('Get container resource usage details.')
                 container_usage = self._get_container_usage(
                     container_info['Names'][0].lstrip('/'))
             else:
@@ -64,6 +68,8 @@ class DockerManage(object):
             'container_net_info': container_net_info,
             'container_usage': container_usage,
         }
+        logger.info('Collect container info, container name: {}.'
+                    .format(container_info['Names'][0].lstrip('/')))
         return container_info_dict
 
     def get_containers_info(self, containers_name=None):
@@ -84,6 +90,7 @@ class DockerManage(object):
             for containers_info in containers_info_list:
                 container_info = self._collect_container_info(containers_info)
                 container_info_list.append(container_info)
+        logger.info('Collect container information.')
         return container_info_list
 
     def get_images(self):
@@ -146,4 +153,5 @@ class DockerManage(object):
             'mem_per': mem_per,
             'nets_traffic': nets_info,
         }
+        logger.info('Collect container resource usage information.')
         return container_usage

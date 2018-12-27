@@ -6,9 +6,11 @@ from rain.cloud.system.disk import DiskInfo
 from rain.cloud.system.network import NetworkInfo
 from rain.cloud.system.process import ProcessInfo
 from rain.cloud.system.system import SystemInfo
+from rain.common import rain_log
 from rain.config.cloud import sum_info_conf
 
 CONF = sum_info_conf.CONF
+logger = rain_log.logger
 
 
 class SumInfo(object):
@@ -89,6 +91,8 @@ class SumInfo(object):
         """
         server_info = {}
         collect_list = CONF.sum_info.collect_list
+        logger.info('Collect the following service information: {}.'
+                    .format(collect_list))
         if 'docker' in collect_list:
             server_info['docker_info'] = self.sum_docker()
         if 'disk' in collect_list:

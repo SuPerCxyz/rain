@@ -4,10 +4,12 @@
 from getdevinfo import getdevinfo
 import psutil
 
+from rain.common import rain_log
 from rain.common import utils
 from rain.config.cloud.system import disk_conf
 
 CONF = disk_conf.CONF
+logger = rain_log.logger
 
 
 class DiskInfo(object):
@@ -35,6 +37,7 @@ class DiskInfo(object):
             physical_disk_dict = utils.byteify(physical_disk_dict)
         except KeyError:
             pass
+        logger.info('Collect physical disks and corresponding partitions.')
         return physical_disk_dict
 
     def get_disk_info(self):
@@ -86,7 +89,9 @@ class DiskInfo(object):
                 'disk_part_info': {},
             }
             if CONF.disk_info.disk_info_detail:
+                logger.debug('Collect disk partition information.')
                 single_disk_info['disk_part_info'] = parts_info
             disk_info.append(single_disk_info)
             disk_info = utils.byteify(disk_info)
+        logger.info('Collect disk information and usage.')
         return disk_info
