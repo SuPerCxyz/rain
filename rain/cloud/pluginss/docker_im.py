@@ -35,8 +35,9 @@ class DockerManage(object):
         # collect network info.
         if CONF.docker_info.docker_net_info_detail:
             logger.debug('Get container network usage details.')
+            net_name = container_info['NetworkSettings']['Networks'].keys()[0]
             simple_net_info = \
-                container_info['NetworkSettings']['Networks']['bridge']
+                container_info['NetworkSettings']['Networks'].get(net_name)
             container_net_info = {
                 'ip': simple_net_info['IPAddress'],
                 'gateway': simple_net_info['Gateway'],
