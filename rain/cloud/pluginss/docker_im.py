@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+import threading
 import time
 
 import docker
@@ -20,6 +21,19 @@ class DockerManage(object):
 
     Manage the docker container, mirror and get some information.
     """
+    def __init__(self):
+        self.container_all_usage = []
+        for container in client.containers.list():
+            container_name =  container.name
+            get_usage_thread = threading.Thread(
+                target=self._get_container_usage, args=(container_name,))
+            get_usage_thread.start()
+        get_usage_thread.join()
+        while True:
+            if len(client.containers.list()) == len(self.container_all_usage):
+                break
+            else:
+                time.sleep(0.1)
 
     def _collect_container_info(self, container_info):
         """Organize and count container information.
@@ -51,8 +65,11 @@ class DockerManage(object):
         if CONF.docker_info.docker_usage_info_detail:
             if container_info['State'] == 'running':
                 logger.debug('Get container resource usage details.')
-                container_usage = self._get_container_usage(
-                    container_info['Names'][0].lstrip('/'))
+                for usages in self.container_all_usage:
+                    if container_info['Names'][0].lstrip('/') == \
+                        usages['container_name']:
+                        usages.pop('container_name')
+                container_usage = usages
             else:
                 container_usage = {}
         else:
@@ -76,7 +93,6 @@ class DockerManage(object):
     def get_containers_info(self, containers_name=None):
         """Query container information.
         """
-        # Need to add multithreading.
         container_info_list = []
         containers_info_list = l_client.containers(all=True)
         if containers_name:
@@ -110,7 +126,7 @@ class DockerManage(object):
             image_info_list.append(image_info)
         return image_info_list
 
-    def _get_container_usage(self, container_name=None):
+    def _get_container_usage(self, container_name):
         """Collect container resource usage.
         """
         container_info = l_client.stats(container_name)
@@ -140,6 +156,7 @@ class DockerManage(object):
             new_result['cpu_stats']['system_cpu_usage'] - \
             old_result['cpu_stats']['system_cpu_usage']
         container_usage = {
+            'container_name': container_name,
             'cpu_total_usage':
                 new_result['cpu_stats']['cpu_usage']['total_usage'] -
                 old_result['cpu_stats']['cpu_usage']['total_usage'],
@@ -155,4 +172,4 @@ class DockerManage(object):
             'nets_traffic': nets_info,
         }
         logger.info('Collect container resource usage information.')
-        return container_usage
+        self.container_all_usage.append(container_usage)
