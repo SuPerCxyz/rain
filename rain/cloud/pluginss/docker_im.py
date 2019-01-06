@@ -69,6 +69,7 @@ class DockerManage(object):
                     if container_info['Names'][0].lstrip('/') == \
                         usages['container_name']:
                         usages.pop('container_name')
+                        self.container_all_usage.remove(usages)
                 container_usage = usages
             else:
                 container_usage = {}
