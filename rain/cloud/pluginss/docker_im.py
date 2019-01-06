@@ -68,9 +68,8 @@ class DockerManage(object):
                 for usages in self.container_all_usage:
                     if container_info['Names'][0].lstrip('/') == \
                         usages['container_name']:
-                        usages.pop('container_name')
                         self.container_all_usage.remove(usages)
-                container_usage = usages
+                        container_usage = usages
             else:
                 container_usage = {}
         else:
@@ -129,7 +128,7 @@ class DockerManage(object):
 
     def _get_container_usage(self, container_name):
         """Collect container resource usage.
-        """
+        """修复
         container_info = l_client.stats(container_name)
         old_result = eval(container_info.next())
         new_result = eval(container_info.next())
