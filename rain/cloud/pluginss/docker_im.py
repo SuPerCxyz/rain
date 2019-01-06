@@ -128,7 +128,7 @@ class DockerManage(object):
 
     def _get_container_usage(self, container_name):
         """Collect container resource usage.
-        """修复
+        """
         container_info = l_client.stats(container_name)
         old_result = eval(container_info.next())
         new_result = eval(container_info.next())
