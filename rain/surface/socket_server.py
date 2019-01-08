@@ -8,15 +8,22 @@ import time
 import threading
 
 from rain.common import rain_log
-from rain.config.cloud import socket_client_conf
+from rain.config.cloud import socket_server_conf
 
-CONF = socket_client_conf.CONF
+CONF = socket_server_conf.CONF
 logger = rain_log.logger
 
 
-class ScoketClient(object):
+class ScoketServer(object):
+    """Socket Server.
+
+    Socket server, constantly receiving requests and sending them to the
+    message queue.
+    """
 
     def socket_service(self):
+        """Initialize the socket connection.
+        """
         try:
             address = CONF.DEFAULT.address
             port = CONF.DEFAULT.port
@@ -25,27 +32,30 @@ class ScoketClient(object):
             s.bind((address, port))
             s.listen(10)
         except socket.error as msg:
-            print msg
+            logger.error(msg)
             sys.exit(1)
-        logger.INFO('Waiting connection...')
+        logger.info('Waiting connection...')
 
         while True:
             conn, addr = s.accept()
-            t = threading.Thread(target=self.deal_data, args=(conn, addr))
+            t = threading.Thread(target=self._deal_data, args=(conn, addr))
             t.start()
 
-    def deal_data(self, conn, addr):
-        print 'Accept new connection from {0}'.format(addr)
-        conn.send('Hi, Welcome to the server!')
+    def _deal_data(self, conn, addr):
+        """Receive requests and process and respond.
+        """
+        logger.info('Accept new connection from {0}'.format(addr))
+        conn.send('Hi, Welcome to rain server!')
 
         while True:
             recv = conn.recv(1024)
             if recv == 'exit' or not recv:
                 conn.send('Goodbye')
-                logger.INFO('Disconnect from {}.'.format(addr))
+                logger.info('Disconnect from {}.'.format(addr))
                 conn.close()
                 break
-            print recv
+            logger.info('Received data from {}: {}'.format(addr, recv))
             conn.send('Successfully received')
         conn.close()
-        logger.INFO('Successfully received {} data'.format(addr))
+
+    # def _redis(self, )

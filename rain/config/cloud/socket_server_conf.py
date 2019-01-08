@@ -14,9 +14,9 @@ socket_client.py script configuration.
 """)
 
 default_info_opts = [
-    cfg.IPOpt('address',
-              default='',
-              help='Monitor node ip.'),
+    cfg.StrOpt('address',
+               default='',
+               help='Monitor node ip.'),
     cfg.IntOpt('port',
                 default='',
                 help='Monitor node port.'),
