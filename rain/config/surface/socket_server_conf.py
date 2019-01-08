@@ -18,8 +18,8 @@ default_info_opts = [
                default='',
                help='Monitor node ip.'),
     cfg.IntOpt('port',
-                default='',
-                help='Monitor node port.'),
+               default='',
+               help='Monitor node port.'),
 ]
 
 CONF = cfg.CONF
