@@ -8,9 +8,9 @@ import time
 import threading
 
 from rain.common import rain_log
-from rain.config.cloud import socket_server_conf
+from rain.config import default_conf
 
-CONF = socket_server_conf.CONF
+CONF = default_conf.CONF
 logger = rain_log.logg(__name__)
 
 
@@ -45,17 +45,17 @@ class ScoketServer(object):
         """Receive requests and process and respond.
         """
         logger.info('Accept new connection from {0}'.format(addr))
-        conn.send('Hi, Welcome to rain server!')
 
         while True:
-            recv = conn.recv(1024)
+            recv = conn.recv(102400)
             if recv == 'exit' or not recv:
-                conn.send('Goodbye')
+                conn.send('Bye')
                 logger.info('Disconnect from {}.'.format(addr))
                 conn.close()
                 break
-            logger.info('Received data from {}: {}'.format(addr, recv))
-            conn.send('Successfully received')
-        conn.close()
+            # with open('/root/Tmp/tmp.txt', 'aw') as f:
+            #     f.write(recv)
+            conn.send('Successfully received data.')
+            logger.info('Successfully received from {}.'.format(addr))
 
     # def _redis(self, )

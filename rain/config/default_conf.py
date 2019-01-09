@@ -17,6 +17,12 @@ default_opt_opts = [
     cfg.BoolOpt('debug',
                 default=False,
                 help='Open debug to collect more information.'),
+    cfg.StrOpt('address',
+               default='',
+               help='Monitor node ip.'),
+    cfg.IntOpt('port',
+               default='',
+               help='Monitor node port.'),
 ]
 
 CONF = cfg.CONF

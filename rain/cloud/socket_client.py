@@ -1,26 +1,31 @@
 #!/usr/bin/env python
 # -*- coding=utf-8 -*-
 
-import os
+import json
 import socket
-import sys
-import time
-import threading
 
-# from rain.common import rain_log
-# from rain.config.cloud import socket_client_conf
+from rain.common import rain_log
+from rain.config import default_conf
 
-# CONF = socket_client_conf.CONF
-# logger = rain_log.logger
+CONF = default_conf.CONF
+logger = rain_log.logg(__name__)
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# 建立连接:
-s.connect(('10.0.0.12', 2333))
-# 接收欢迎消息:
-print s.recv(1024)
-for data in ['Michael', 'Tracy', 'Sarah']:
-    # 发送数据:
-    s.send(data)
-    print s.recv(1024)
-s.send('exit')
-s.close()
+
+class SocketClient(object):
+    """Socket client.
+
+    The socket client receives the request data and sends the data to the
+    server.
+    """
+
+    def send_data(self, data):
+        address = CONF.DEFAULT.address
+        port = CONF.DEFAULT.port
+        client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        client.connect((address, port))
+        data = json.dumps(data)
+        client.send(data)
+        logger.info(client.recv(102400))
+        client.send('exit')
+        logger.info(client.recv(102400))
+        client.close()
