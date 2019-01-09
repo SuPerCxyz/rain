@@ -9,6 +9,7 @@ import threading
 
 from rain.common import rain_log
 from rain.config import default_conf
+from rain.surface import rain_celery
 
 CONF = default_conf.CONF
 logger = rain_log.logg(__name__)
@@ -47,15 +48,16 @@ class ScoketServer(object):
         logger.info('Accept new connection from {0}'.format(addr))
 
         while True:
-            recv = conn.recv(102400)
+            recv = conn.recv(1024000)
             if recv == 'exit' or not recv:
                 conn.send('Bye')
                 logger.info('Disconnect from {}.'.format(addr))
                 conn.close()
                 break
-            # with open('/root/Tmp/tmp.txt', 'aw') as f:
-            #     f.write(recv)
+            self._celery(addr, recv)
             conn.send('Successfully received data.')
             logger.info('Successfully received from {}.'.format(addr))
 
-    # def _redis(self, )
+    def _celery(self, addr, recv):
+        rain_celery.InsData.apply_async((addr, recv), queue='InsData')
+        logger.info('The message was successfully sent to the message queue')

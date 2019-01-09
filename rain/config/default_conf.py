@@ -23,6 +23,12 @@ default_opt_opts = [
     cfg.IntOpt('port',
                default='',
                help='Monitor node port.'),
+    cfg.StrOpt('redis_passwd',
+               default='',
+               help='Redis password.'),
+    cfg.StrOpt('redis_port',
+               default='6379',
+               help='Redis port'),
 ]
 
 CONF = cfg.CONF
