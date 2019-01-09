@@ -9,6 +9,7 @@ def str_time(timestamp):
     dt = time.strftime("%Y-%m-%d %H:%M:%S", time_local)
     return dt
 
+
 def byteify(input, encoding='utf-8'):
     """unicode to str.
     """
@@ -22,17 +23,18 @@ def byteify(input, encoding='utf-8'):
     else:
         return input
 
+
 def unit_of_measurement(num):
     lens = len(num)
-    if 0<lens<4:
+    if 0 < lens < 4:
         return num + 'B'
-    elif 3<lens<7:
+    elif 3 < lens < 7:
         return num / 1024 + 'KB'
-    elif 6<lens<10:
-        return num / (1024 ** 2)+ 'MB'
-    elif 9<lens<13:
-        return num / (1024 ** 3)+ 'GB'
-    elif 12<lens<16:
-        return num / (1024 ** 4)+ 'TB'
+    elif 6 < lens < 10:
+        return num / (1024 ** 2) + 'MB'
+    elif 9 < lens < 13:
+        return num / (1024 ** 3) + 'GB'
+    elif 12 < lens < 16:
+        return num / (1024 ** 4) + 'TB'
     else:
         pass

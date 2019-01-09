@@ -24,7 +24,7 @@ class DockerManage(object):
     def __init__(self):
         self.container_all_usage = []
         for container in client.containers.list():
-            container_name =  container.name
+            container_name = container.name
             get_usage_thread = threading.Thread(
                 target=self._get_container_usage, args=(container_name,))
             get_usage_thread.start()
@@ -67,7 +67,7 @@ class DockerManage(object):
                 logger.debug('Get container resource usage details.')
                 for usages in self.container_all_usage:
                     if container_info['Names'][0].lstrip('/') == \
-                        usages['container_name']:
+                            usages['container_name']:
                         self.container_all_usage.remove(usages)
                         container_usage = usages
             else:

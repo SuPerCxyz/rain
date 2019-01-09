@@ -13,6 +13,7 @@ from rain.config import default_conf
 CONF = default_conf.CONF
 log_path = CONF.DEFAULT.log_path
 
+
 def logg(name):
     logger = logging.getLogger(name)
 
