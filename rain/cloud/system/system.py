@@ -11,7 +11,7 @@ import psutil
 from rain.common import rain_log
 from rain.common import utils
 
-logger = rain_log.logger
+logger = rain_log.logg(__name__)
 
 
 class SystemInfo(object):

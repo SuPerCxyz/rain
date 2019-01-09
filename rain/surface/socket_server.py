@@ -11,7 +11,7 @@ from rain.common import rain_log
 from rain.config.cloud import socket_server_conf
 
 CONF = socket_server_conf.CONF
-logger = rain_log.logger
+logger = rain_log.logg(__name__)
 
 
 class ScoketServer(object):

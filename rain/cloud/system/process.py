@@ -10,7 +10,7 @@ from rain.common import utils
 from rain.config.cloud.system import process_conf
 
 CONF = process_conf.CONF
-logger = rain_log.logger
+logger = rain_log.logg(__name__)
 
 
 class ProcessInfo(object):

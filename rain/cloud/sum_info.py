@@ -10,7 +10,7 @@ from rain.common import rain_log
 from rain.config.cloud import sum_info_conf
 
 CONF = sum_info_conf.CONF
-logger = rain_log.logger
+logger = rain_log.logg(__name__)
 
 
 class SumInfo(object):

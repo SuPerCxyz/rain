@@ -13,7 +13,7 @@ from rain.config.cloud.pluginss import docker_conf
 CONF = docker_conf.CONF
 client = docker.DockerClient(base_url='unix://var/run/docker.sock')
 l_client = docker.APIClient(base_url='unix://var/run/docker.sock')
-logger = rain_log.logger
+logger = rain_log.logg(__name__)
 
 
 class DockerManage(object):

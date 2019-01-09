@@ -9,7 +9,7 @@ from rain.common import utils
 from rain.config.cloud.system import disk_conf
 
 CONF = disk_conf.CONF
-logger = rain_log.logger
+logger = rain_log.logg(__name__)
 
 
 class DiskInfo(object):

@@ -13,17 +13,19 @@ from rain.config import default_conf
 CONF = default_conf.CONF
 log_path = CONF.DEFAULT.log_path
 
-logger = logging.getLogger('Rain')
+def logg(name):
+    logger = logging.getLogger(name)
 
-fh = logging.FileHandler(log_path + '/rain.log')
-if CONF.DEFAULT.debug:
-    logger.setLevel(logging.DEBUG)
-    fh.setLevel(logging.DEBUG)
-else:
-    logger.setLevel(logging.INFO)
-    fh.setLevel(logging.INFO)
+    fh = logging.FileHandler(log_path + '/rain.log')
+    if CONF.DEFAULT.debug:
+        logger.setLevel(logging.DEBUG)
+        fh.setLevel(logging.DEBUG)
+    else:
+        logger.setLevel(logging.INFO)
+        fh.setLevel(logging.INFO)
 
-formatter = logging.Formatter(
-    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-fh.setFormatter(formatter)
-logger.addHandler(fh)
+    formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    fh.setFormatter(formatter)
+    logger.addHandler(fh)
+    return logger
