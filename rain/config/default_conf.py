@@ -23,12 +23,12 @@ default_opt_opts = [
     cfg.IntOpt('port',
                default='',
                help='Monitor node port.'),
-    cfg.StrOpt('redis_passwd',
-               default='',
-               help='Redis password.'),
-    cfg.StrOpt('redis_port',
-               default='6379',
-               help='Redis port'),
+    cfg.StrOpt('mongo_address',
+               default='localhost',
+               help='Mongodb address.'),
+    cfg.StrOpt('mongo_port',
+               default='27017',
+               help='Mongodb port'),
 ]
 
 CONF = cfg.CONF
