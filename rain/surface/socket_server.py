@@ -54,10 +54,6 @@ class ScoketServer(object):
                 logger.info('Disconnect from {}.'.format(addr))
                 conn.close()
                 break
-            self._celery(addr, recv)
+            # self._sned_to_mq(addr, recv)
             conn.send('Successfully received data.')
             logger.info('Successfully received from {}.'.format(addr))
-
-    def _celery(self, addr, recv):
-        rain_celery.InsData.apply_async((addr, recv), queue='InsData')
-        logger.info('The message was successfully sent to the message queue')
