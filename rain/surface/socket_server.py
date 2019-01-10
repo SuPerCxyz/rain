@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # -*- coding=utf-8 -*-
 
+import json
 import socket
 import sys
 import threading
 
 from rain.common import rain_log
 from rain.config import default_conf
+from rain.surface import rain_mongo
 
 CONF = default_conf.CONF
 logger = rain_log.logg(__name__)
@@ -18,6 +20,9 @@ class ScoketServer(object):
     Socket server, constantly receiving requests and sending them to the
     message queue.
     """
+
+    def __init__(self):
+        self.mongodb = rain_mongo.RainMongo()
 
     def socket_service(self):
         """Initialize the socket connection.
@@ -51,5 +56,6 @@ class ScoketServer(object):
                 logger.info('Disconnect from {}.'.format(addr))
                 conn.close()
                 break
+            self.mongodb.rain_insert_data(recv, addr[0], 'rain', 'node_usage')
             conn.send('Successfully received data.')
             logger.info('Successfully received from {}.'.format(addr))
