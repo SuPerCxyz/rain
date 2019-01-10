@@ -21,16 +21,23 @@ class DockerManage(object):
 
     Manage the docker container, mirror and get some information.
     """
+
     def __init__(self):
         self.container_all_usage = []
-        for container in client.containers.list():
+
+    def _multi_threaded_collection(self):
+        """Multi-line scale collection container resource usage information.
+        """
+        self.container_all_usage = []
+        container_list = client.containers.list()
+        for container in container_list:
             container_name = container.name
             get_usage_thread = threading.Thread(
                 target=self._get_container_usage, args=(container_name,))
             get_usage_thread.start()
         get_usage_thread.join()
         while True:
-            if len(client.containers.list()) == len(self.container_all_usage):
+            if len(container_list) == len(self.container_all_usage):
                 break
             else:
                 time.sleep(0.1)
@@ -46,6 +53,7 @@ class DockerManage(object):
             mount['Destination'] = mount_info['Destination']
             mount['Source'] = mount_info['Source']
             container_mount.append(mount)
+
         # collect network info.
         if CONF.docker_info.docker_net_info_detail:
             logger.debug('Get container network usage details.')
@@ -61,6 +69,7 @@ class DockerManage(object):
             }
         else:
             container_net_info = {}
+
         # summary info.
         if CONF.docker_info.docker_usage_info_detail:
             if container_info['State'] == 'running':
@@ -74,6 +83,7 @@ class DockerManage(object):
                 container_usage = {}
         else:
             container_usage = {}
+
         container_info_dict = {
             'created': utils.str_time(container_info['Created']),
             'container_name': container_info['Names'][0].lstrip('/'),
@@ -93,6 +103,8 @@ class DockerManage(object):
     def get_containers_info(self, containers_name=None):
         """Query container information.
         """
+        if CONF.docker_info.docker_usage_info_detail:
+            self._multi_threaded_collection()
         container_info_list = []
         containers_info_list = l_client.containers(all=True)
         if containers_name:
