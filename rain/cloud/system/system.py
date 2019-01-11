@@ -50,7 +50,16 @@ class SystemInfo(object):
         """
         cpu_count = psutil.cpu_count()
         cpu_percent = psutil.cpu_percent(interval=1, percpu=True)
-        cpu_percent_info = psutil.cpu_times_percent(interval=1, percpu=True)
+        cpus_times_percent = psutil.cpu_times_percent(interval=1, percpu=True)
+        cpu_percent_info = []
+        for cpu in cpus_times_percent:
+            percent_info = {
+                'user': cpu.user,
+                'system': cpu.system,
+                'idle': cpu.idle,
+                'iowait': cpu.iowait
+            }
+            cpu_percent_info.append(percent_info)
         system_load = self._load_stat()
         cpu_info_dict = {
             'cpu_count': cpu_count,
