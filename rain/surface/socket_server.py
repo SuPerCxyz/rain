@@ -5,6 +5,7 @@ import json
 import socket
 import sys
 import threading
+import time
 
 from rain.common import rain_log
 from rain.config import default_conf
@@ -49,13 +50,32 @@ class ScoketServer(object):
         """
         logger.info('Accept new connection from {0}'.format(addr))
 
+        # Verify data length.
         while True:
             recv = conn.recv(1024000)
-            if recv == 'exit' or not recv:
-                conn.send('Bye')
-                logger.info('Disconnect from {}.'.format(addr))
-                conn.close()
+            if 'send_len:' in recv:
+                conn.send(recv)
+                lens = recv[9:]
                 break
-            self.mongodb.rain_insert_data(recv, addr[0], 'rain', 'node_usage')
-            conn.send('Successfully received data.')
-            logger.info('Successfully received from {}.'.format(addr))
+            if recv == 'error':
+                # conn.close()
+                break
+
+        # Verify the data and send it to mongodb if it succeeds.
+        loop = CONF.DEFAULT.socket_retry
+        while loop:
+            recv = conn.recv(1024000)
+            if recv == 'exit' or not recv:
+                logger.info('Disconnect from {}.'.format(addr))
+                break
+            if str(len(recv)) == lens:
+                self.mongodb.rain_insert_data(recv, addr[0], 'rain', 'node_usage')
+                conn.send('Successfully received data.')
+                logger.info('Successfully received from {}.'.format(addr))
+                break
+            else:
+                conn.send('Retry')
+                logger.info('Did not receive full data from {}.'.format(addr))
+            time.sleep(0.3)
+            loop -= 1
+        # conn.close()

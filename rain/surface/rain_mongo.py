@@ -30,6 +30,5 @@ class RainMongo(object):
         data['now_time'] = now_time
         data['ip_address'] = address
         result = mycol.insert_one(data)
-        print 'Successfully inserted into mongodb, id: {}.'.format(result.inserted_id)
         logger.info('Successfully inserted into mongodb, id: {}.'.format(
                     result.inserted_id))
