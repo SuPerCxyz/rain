@@ -23,9 +23,6 @@ class SumInfo(object):
     directory.
     """
 
-    def __init__(self):
-        self.server_info = {}
-
     @async_call
     def sum_docker(self):
         """Summary docker information.

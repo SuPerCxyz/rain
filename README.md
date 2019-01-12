@@ -1,6 +1,6 @@
 # Rain
 
-![logo](./logo.jpg)
+![logo](./Rain.png)
 
 Simple linux monitoring
 
