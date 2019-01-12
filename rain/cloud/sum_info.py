@@ -105,6 +105,7 @@ class SumInfo(object):
     def sum_info(self):
         """Summary information.
         """
+        self.server_info = {}
         collect_list = CONF.sum_info.collect_list
         logger.info('Collect the following service information: {}.'
                     .format(collect_list))
