@@ -40,6 +40,7 @@ def unit_of_measurement(num):
     else:
         pass
 
+
 def async_call(fn):
     def wrapper(*args, **kwargs):
         t = Thread(target=fn, args=args, kwargs=kwargs)

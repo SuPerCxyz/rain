@@ -69,7 +69,8 @@ class ScoketServer(object):
                 logger.info('Disconnect from {}.'.format(addr))
                 break
             if str(len(recv)) == lens:
-                self.mongodb.rain_insert_data(recv, addr[0], 'rain', 'node_usage')
+                self.mongodb.rain_insert_data(
+                    recv, addr[0], 'rain', 'node_usage')
                 conn.send('Successfully received data.')
                 logger.info('Successfully received from {}.'.format(addr))
                 break

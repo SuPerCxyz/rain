@@ -60,7 +60,8 @@ class SocketClient(object):
                                'remaining times: {}.'.format(loop - 1))
                 loop -= 1
             if 'Successfully' in message:
-                logger.info('The socket server successfully received the data.')
+                logger.info('The socket server successfully received the '
+                            'data.')
                 client.send('exit')
                 break
         # client.close()
