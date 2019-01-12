@@ -10,6 +10,7 @@ import psutil
 
 from rain.common import rain_log
 from rain.common import utils
+from rain.common.utils import async_call
 
 logger = rain_log.logg(__name__)
 
@@ -20,6 +21,9 @@ class SystemInfo(object):
     Collect system information, including cpu, memory, hostname, boot time,
     login information...
     """
+
+    def __init__(self):
+        self.thread = {}
 
     def _load_stat(self):
         """Collecting system load.
@@ -44,15 +48,29 @@ class SystemInfo(object):
             logger.info('Collect system load.')
             return system_load
 
+    @async_call
+    def _cpu_percent(self):
+        tmp = psutil.cpu_percent(interval=1, percpu=True)
+        self.thread['cpu_percent'] = tmp
+
+    @async_call
+    def _cpus_times_percent(self):
+        tmp = psutil.cpu_times_percent(interval=1, percpu=True)
+        self.thread['cpus_times_percent'] = tmp
+
     def get_cpuinfo_info(self):
         """Collect the number of cpu and usage information and
         return the dictionary type.
         """
         cpu_count = psutil.cpu_count()
-        cpu_percent = psutil.cpu_percent(interval=1, percpu=True)
-        cpus_times_percent = psutil.cpu_times_percent(interval=1, percpu=True)
+        self._cpu_percent()
+        self._cpus_times_percent()
+        while True:
+            if len(self.thread.keys()) == 2:
+                break
+            time.sleep(0.1)
         cpu_percent_info = []
-        for cpu in cpus_times_percent:
+        for cpu in self.thread['cpus_times_percent']:
             percent_info = {
                 'user': cpu.user,
                 'system': cpu.system,
@@ -63,7 +81,7 @@ class SystemInfo(object):
         system_load = self._load_stat()
         cpu_info_dict = {
             'cpu_count': cpu_count,
-            'cpu_percent': cpu_percent,
+            'cpu_percent': self.thread['cpu_percent'],
             'cpu_percent_info': cpu_percent_info,
             'system_load': system_load
         }

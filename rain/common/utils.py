@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+from threading import Thread
 import time
 
 
@@ -38,3 +39,10 @@ def unit_of_measurement(num):
         return num / (1024 ** 4) + 'TB'
     else:
         pass
+
+def async_call(fn):
+    def wrapper(*args, **kwargs):
+        t = Thread(target=fn, args=args, kwargs=kwargs)
+        t.start()
+
+    return wrapper

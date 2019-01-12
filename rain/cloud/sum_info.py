@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+import time
+
 from rain.cloud.pluginss.docker_im import DockerManage
 from rain.cloud.system.disk import DiskInfo
 from rain.cloud.system.network import NetworkInfo
 from rain.cloud.system.process import ProcessInfo
 from rain.cloud.system.system import SystemInfo
 from rain.common import rain_log
+from rain.common.utils import async_call
 from rain.config.cloud import sum_info_conf
 
 CONF = sum_info_conf.CONF
@@ -20,6 +23,10 @@ class SumInfo(object):
     directory.
     """
 
+    def __init__(self):
+        self.server_info = {}
+
+    @async_call
     def sum_docker(self):
         """Summary docker information.
         """
@@ -30,8 +37,10 @@ class SumInfo(object):
             'containers': docker_container_info,
             'images': docker_image_info,
         }
-        return docker_info
+        self.server_info['docker_info'] = docker_info
+        # return docker_info
 
+    @async_call
     def sum_disk(self):
         """Summary disk information.
 
@@ -42,8 +51,10 @@ class SumInfo(object):
         disk_info = {
             'disk_usage': disk_usage_info,
         }
-        return disk_info
+        self.server_info['disk_info'] = disk_info
+        # return disk_info
 
+    @async_call
     def sum_network(self):
         """Summary network information.
         """
@@ -60,8 +71,10 @@ class SumInfo(object):
         if CONF.sum_info.network_port:
             net_port_info = net_class.get_net_port()
             net_info['network_port'] = net_port_info
-        return net_info
+        self.server_info['network_info'] = net_info
+        # return net_info
 
+    @async_call
     def sum_process(self):
         """Summary process information.
         """
@@ -70,8 +83,10 @@ class SumInfo(object):
         process_info = {
             'process_info': process_infos,
         }
-        return process_info
+        self.server_info['process_info'] = process_info
+        # return process_info
 
+    @async_call
     def sum_system(self):
         """Summary system information.
         """
@@ -84,23 +99,28 @@ class SumInfo(object):
             'memcache': mem_info,
             'system_info': system_infos,
         }
-        return system_info
+        self.server_info['system_inf'] = system_info
+        # return system_info
 
     def sum_info(self):
         """Summary information.
         """
-        server_info = {}
         collect_list = CONF.sum_info.collect_list
         logger.info('Collect the following service information: {}.'
                     .format(collect_list))
         if 'docker' in collect_list:
-            server_info['docker_info'] = self.sum_docker()
+            self.sum_docker()
         if 'disk' in collect_list:
-            server_info['disk_info'] = self.sum_disk()
+            self.sum_disk()
         if 'network' in collect_list:
-            server_info['network_info'] = self.sum_network()
+            self.sum_network()
         if 'process' in collect_list:
-            server_info['process_info'] = self.sum_process()
+            self.sum_process()
         if 'system' in collect_list:
-            server_info['system_inf'] = self.sum_system()
-        return server_info
+            self.sum_system()
+        while True:
+            if len(self.server_info.keys()) == len(collect_list):
+                break
+            time.sleep(0.1)
+        logger.info('Successful data collection.')
+        return self.server_info
