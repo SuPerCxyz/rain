@@ -96,7 +96,7 @@ class SumInfo(object):
             'memcache': mem_info,
             'system_info': system_infos,
         }
-        self.server_info['system_inf'] = system_info
+        self.server_info['system_info'] = system_info
         # return system_info
 
     def sum_info(self):
