@@ -19,11 +19,31 @@
                 <img src="./images/Rain.png" alt="Rain logo" width="50"/>
             </a>
             <span style="font-family:Arial, Helvetica, sans-serif; color: #89cbf4; font-size: 45px">&nbsp; Rain: simple monitoring platform</sub></span>
-            </h2>
-            <hr>
         </div>
         <div style="width: 1500px; margin: 0 auto;" class="body">
             <p style="font-family:Arial, Helvetica, sans-serif; font-size: 23px">Overview of node resource usagesss</p>
+            <script type="text/javascript">
+                var m = 100
+                var n = 10
+                function randomFiveDiffNum(m,n){
+                    var num = [];
+                    for(var i = 0; i < n; i++){
+                        num[i] = Math.floor(Math.random()*n);
+                        for(var j = 0; j < i; j++){
+                            if(num[i] == num[j]){
+                                i--;
+                            }
+                        }
+                    }
+                    return num;
+                }
+                function ls(count) {
+                var a = [], b = 1;
+                for (; b <= count; b++)
+                    a.push(b);
+                return a;
+                }
+            </script>
             <div id="container1" style="width: 500px; height:300px; float:left" ></div>
             <script type="text/javascript">
                 var dom = document.getElementById("container1");
@@ -48,11 +68,6 @@
                         data:['cpu','内存','网卡','磁盘'],
                         right: '20'
                     },
-                    // toolbox: {
-                    //     feature: {
-                    //         saveAsImage: {}
-                    //     }
-                    // },
                     grid: {
                         left: '3%',
                         right: '4%',
@@ -63,7 +78,7 @@
                         {
                             type : 'category',
                             boundaryGap : false,
-                            data : ['11:00','11:10','11:20','11:30','11:40','11:50','11:60']
+                            data : ls(n)
                         }
                     ],
                     yAxis : [
@@ -81,22 +96,22 @@
                         {
                             name:'cpu',
                             type:'line',
-                            data:[11, 14, 20, 41, 52, 52, 71]
+                            data:randomFiveDiffNum(m,n)
                         },
                         {
                             name:'内存',
                             type:'line',
-                            data:[15, 46, 62, 66, 71, 83, 84]
+                            data:randomFiveDiffNum(m,n)
                         },
                         {
                             name:'网卡',
                             type:'line',
-                            data:[35,37,39,41,43,45,47]
+                            data:randomFiveDiffNum(m,n)
                         },
                         {
                             name:'磁盘',
                             type:'line',
-                            data:[17, 31, 31, 71, 88, 94, 98]
+                            data:randomFiveDiffNum(m,n)
                         }
                     ]
                 };
@@ -129,11 +144,6 @@
                         data:['cpu','内存','网卡','磁盘'],
                         right: '20'
                     },
-                    // toolbox: {
-                    //     feature: {
-                    //         saveAsImage: {}
-                    //     }
-                    // },
                     grid: {
                         left: '3%',
                         right: '4%',
@@ -144,7 +154,7 @@
                         {
                             type : 'category',
                             boundaryGap : false,
-                            data : ['11:00','11:10','11:20','11:30','11:40','11:50','11:60']
+                            data : ls(n)
                         }
                     ],
                     yAxis : [
@@ -162,22 +172,22 @@
                         {
                             name:'cpu',
                             type:'line',
-                            data:[8, 14, 64, 79, 81, 84, 85]
+                            data:randomFiveDiffNum(m,n)
                         },
                         {
                             name:'内存',
                             type:'line',
-                            data:[9, 14, 42, 66, 68, 94, 94]
+                            data:randomFiveDiffNum(m,n)
                         },
                         {
                             name:'网卡',
                             type:'line',
-                            data:[11, 42, 63, 69, 81, 92, 99]
+                            data:randomFiveDiffNum(m,n)
                         },
                         {
                             name:'磁盘',
                             type:'line',
-                            data:[9, 42, 56, 65, 67, 67, 95]
+                            data:randomFiveDiffNum(m,n)
                         }
                     ]
                 };
@@ -210,11 +220,6 @@
                         data:['cpu','内存','网卡','磁盘'],
                         right: '20'
                     },
-                    // toolbox: {
-                    //     feature: {
-                    //         saveAsImage: {}
-                    //     }
-                    // },
                     grid: {
                         left: '3%',
                         right: '4%',
@@ -225,7 +230,7 @@
                         {
                             type : 'category',
                             boundaryGap : false,
-                            data : ['11:00','11:10','11:20','11:30','11:40','11:50','11:60']
+                            data : ls(n)
                         }
                     ],
                     yAxis : [
@@ -243,22 +248,22 @@
                         {
                             name:'cpu',
                             type:'line',
-                            data:[5, 19, 53, 59, 60, 66, 86]
+                            data:randomFiveDiffNum(m,n)
                         },
                         {
                             name:'内存',
                             type:'line',
-                            data:[19, 24, 35, 64, 67, 95, 98]
+                            data:randomFiveDiffNum(m,n)
                         },
                         {
                             name:'网卡',
                             type:'line',
-                            data:[3, 24, 39, 43, 43, 99, 99]
+                            data:randomFiveDiffNum(m,n)
                         },
                         {
                             name:'磁盘',
                             type:'line',
-                            data:[29, 37, 49, 52, 62, 64, 65]
+                            data:randomFiveDiffNum(m,n)
                         }
                     ]
                 };
