@@ -11,6 +11,7 @@
             }
         </style>
         <script src="echarts.js"></script>
+        <script src="overview_usage.js"></script>
     </head>
     <body>
         <div style="width: 1500px; margin: 0 auto;" class="title">
@@ -18,104 +19,15 @@
             <a href="https://github.com/SuPerCxyz/rain" target="_blank">
                 <img src="./images/Rain.png" alt="Rain logo" width="50"/>
             </a>
-            <span style="font-family:Arial, Helvetica, sans-serif; color: #89cbf4; font-size: 45px">&nbsp; Rain: simple monitoring platform</sub></span>
+            <span style="font-family:Arial, Helvetica, sans-serif; color: #89cbf4; font-size: 45px">&nbsp; Rain: simple linux monitoring platform</sub></span>
         </div>
         <div style="width: 1500px; margin: 0 auto;" class="body">
-            <p style="font-family:Arial, Helvetica, sans-serif; font-size: 23px">Overview of node resource usagesss</p>
-            <script type="text/javascript">
-                var m = 100
-                var n = 10
-                function randomFiveDiffNum(m,n){
-                    var num = [];
-                    for(var i = 0; i < n; i++){
-                        num[i] = Math.floor(Math.random()*n);
-                        for(var j = 0; j < i; j++){
-                            if(num[i] == num[j]){
-                                i--;
-                            }
-                        }
-                    }
-                    return num;
-                }
-                function ls(count) {
-                var a = [], b = 1;
-                for (; b <= count; b++)
-                    a.push(b);
-                return a;
-                }
-            </script>
+            <p style="font-family:Arial, Helvetica, sans-serif; font-size: 23px">Overview of node resource usage</p>
             <div id="container1" style="width: 500px; height:300px; float:left" ></div>
             <script type="text/javascript">
                 var dom = document.getElementById("container1");
                 var myChart = echarts.init(dom);
-                var app = {};
-                option = null;
-                option = {
-                    title: {
-                        text: 'node-1',
-                        left: '0'
-                    },
-                    tooltip : {
-                        trigger: 'axis',
-                        axisPointer: {
-                            type: 'cross',
-                            label: {
-                                backgroundColor: '#6a7985'
-                            }
-                        }
-                    },
-                    legend: {
-                        data:['cpu','内存','网卡','磁盘'],
-                        right: '20'
-                    },
-                    grid: {
-                        left: '3%',
-                        right: '4%',
-                        bottom: '3%',
-                        containLabel: true
-                    },
-                    xAxis : [
-                        {
-                            type : 'category',
-                            boundaryGap : false,
-                            data : ls(n)
-                        }
-                    ],
-                    yAxis : [
-                        {
-                            type: 'value',  
-                            axisLabel: {  
-                                show: true,  
-                                interval: 'auto',  
-                                formatter: '{value} %'  
-                                },  
-                            show: true  
-                        }
-                    ],
-                    series : [
-                        {
-                            name:'cpu',
-                            type:'line',
-                            data:randomFiveDiffNum(m,n)
-                        },
-                        {
-                            name:'内存',
-                            type:'line',
-                            data:randomFiveDiffNum(m,n)
-                        },
-                        {
-                            name:'网卡',
-                            type:'line',
-                            data:randomFiveDiffNum(m,n)
-                        },
-                        {
-                            name:'磁盘',
-                            type:'line',
-                            data:randomFiveDiffNum(m,n)
-                        }
-                    ]
-                };
-                ;
+                option = def_option('node-1 192.168.0.1');
                 if (option && typeof option === "object") {
                     myChart.setOption(option, true);
                 }
@@ -124,74 +36,7 @@
             <script type="text/javascript">
                 var dom = document.getElementById("container2");
                 var myChart = echarts.init(dom);
-                var app = {};
-                option = null;
-                option = {
-                    title: {
-                        text: 'node-2',
-                        left: '0'
-                    },
-                    tooltip : {
-                        trigger: 'axis',
-                        axisPointer: {
-                            type: 'cross',
-                            label: {
-                                backgroundColor: '#6a7985'
-                            }
-                        }
-                    },
-                    legend: {
-                        data:['cpu','内存','网卡','磁盘'],
-                        right: '20'
-                    },
-                    grid: {
-                        left: '3%',
-                        right: '4%',
-                        bottom: '3%',
-                        containLabel: true
-                    },
-                    xAxis : [
-                        {
-                            type : 'category',
-                            boundaryGap : false,
-                            data : ls(n)
-                        }
-                    ],
-                    yAxis : [
-                        {
-                            type: 'value',  
-                            axisLabel: {  
-                                show: true,  
-                                interval: 'auto',  
-                                formatter: '{value} %'  
-                                },  
-                            show: true  
-                        }
-                    ],
-                    series : [
-                        {
-                            name:'cpu',
-                            type:'line',
-                            data:randomFiveDiffNum(m,n)
-                        },
-                        {
-                            name:'内存',
-                            type:'line',
-                            data:randomFiveDiffNum(m,n)
-                        },
-                        {
-                            name:'网卡',
-                            type:'line',
-                            data:randomFiveDiffNum(m,n)
-                        },
-                        {
-                            name:'磁盘',
-                            type:'line',
-                            data:randomFiveDiffNum(m,n)
-                        }
-                    ]
-                };
-                ;
+                option = def_option('node-2 192.168.0.2');
                 if (option && typeof option === "object") {
                     myChart.setOption(option, true);
                 }
@@ -200,74 +45,34 @@
             <script type="text/javascript">
                 var dom = document.getElementById("container3");
                 var myChart = echarts.init(dom);
-                var app = {};
-                option = null;
-                option = {
-                    title: {
-                        text: 'node-3',
-                        left: '0'
-                    },
-                    tooltip : {
-                        trigger: 'axis',
-                        axisPointer: {
-                            type: 'cross',
-                            label: {
-                                backgroundColor: '#6a7985'
-                            }
-                        }
-                    },
-                    legend: {
-                        data:['cpu','内存','网卡','磁盘'],
-                        right: '20'
-                    },
-                    grid: {
-                        left: '3%',
-                        right: '4%',
-                        bottom: '3%',
-                        containLabel: true
-                    },
-                    xAxis : [
-                        {
-                            type : 'category',
-                            boundaryGap : false,
-                            data : ls(n)
-                        }
-                    ],
-                    yAxis : [
-                        {
-                            type: 'value',  
-                            axisLabel: {  
-                                show: true,  
-                                interval: 'auto',  
-                                formatter: '{value} %'  
-                                },  
-                            show: true  
-                        }
-                    ],
-                    series : [
-                        {
-                            name:'cpu',
-                            type:'line',
-                            data:randomFiveDiffNum(m,n)
-                        },
-                        {
-                            name:'内存',
-                            type:'line',
-                            data:randomFiveDiffNum(m,n)
-                        },
-                        {
-                            name:'网卡',
-                            type:'line',
-                            data:randomFiveDiffNum(m,n)
-                        },
-                        {
-                            name:'磁盘',
-                            type:'line',
-                            data:randomFiveDiffNum(m,n)
-                        }
-                    ]
-                };
-                ;
+                option = def_option('node-3 192.168.0.3');
+                if (option && typeof option === "object") {
+                    myChart.setOption(option, true);
+                }
+            </script>
+            <div id="container4" style="width: 500px; height:300px; float:left"></div>
+            <script type="text/javascript">
+                var dom = document.getElementById("container4");
+                var myChart = echarts.init(dom);
+                option = def_option('node-4 192.168.0.4');
+                if (option && typeof option === "object") {
+                    myChart.setOption(option, true);
+                }
+            </script>
+            <div id="container5" style="width: 500px; height:300px; float:left"></div>
+            <script type="text/javascript">
+                var dom = document.getElementById("container5");
+                var myChart = echarts.init(dom);
+                option = def_option('node-5 192.168.0.5');
+                if (option && typeof option === "object") {
+                    myChart.setOption(option, true);
+                }
+            </script>
+            <div id="container6" style="width: 500px; height:300px; float:left"></div>
+            <script type="text/javascript">
+                var dom = document.getElementById("container6");
+                var myChart = echarts.init(dom);
+                option = def_option('node-6 192.168.0.6');
                 if (option && typeof option === "object") {
                     myChart.setOption(option, true);
                 }
