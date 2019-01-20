@@ -10,9 +10,10 @@
                 text-decoration: none
             }
         </style>
+        <script src="echarts.js"></script>
     </head>
     <body>
-        <div style="width: 1600px; margin: 0 auto;" class="title">
+        <div style="width: 1500px; margin: 0 auto;" class="title">
             <h2>
             <a href="https://github.com/SuPerCxyz/rain" target="_blank">
                 <img src="./images/Rain.png" alt="Rain logo" width="50"/>
@@ -21,8 +22,251 @@
             </h2>
             <hr>
         </div>
-        <div style="width: 1600px; margin: 0 auto;" class="body">
-            <p style="font-family:Arial, Helvetica, sans-serif; font-size: 23px">Overview of node resource usage</p>
+        <div style="width: 1500px; margin: 0 auto;" class="body">
+            <p style="font-family:Arial, Helvetica, sans-serif; font-size: 23px">Overview of node resource usagesss</p>
+            <div id="container1" style="width: 500px; height:300px; float:left" ></div>
+            <script type="text/javascript">
+                var dom = document.getElementById("container1");
+                var myChart = echarts.init(dom);
+                var app = {};
+                option = null;
+                option = {
+                    title: {
+                        text: 'node-1',
+                        left: '0'
+                    },
+                    tooltip : {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'cross',
+                            label: {
+                                backgroundColor: '#6a7985'
+                            }
+                        }
+                    },
+                    legend: {
+                        data:['cpu','内存','网卡','磁盘'],
+                        right: '20'
+                    },
+                    // toolbox: {
+                    //     feature: {
+                    //         saveAsImage: {}
+                    //     }
+                    // },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis : [
+                        {
+                            type : 'category',
+                            boundaryGap : false,
+                            data : ['11:00','11:10','11:20','11:30','11:40','11:50','11:60']
+                        }
+                    ],
+                    yAxis : [
+                        {
+                            type: 'value',  
+                            axisLabel: {  
+                                show: true,  
+                                interval: 'auto',  
+                                formatter: '{value} %'  
+                                },  
+                            show: true  
+                        }
+                    ],
+                    series : [
+                        {
+                            name:'cpu',
+                            type:'line',
+                            data:[11, 14, 20, 41, 52, 52, 71]
+                        },
+                        {
+                            name:'内存',
+                            type:'line',
+                            data:[15, 46, 62, 66, 71, 83, 84]
+                        },
+                        {
+                            name:'网卡',
+                            type:'line',
+                            data:[35,37,39,41,43,45,47]
+                        },
+                        {
+                            name:'磁盘',
+                            type:'line',
+                            data:[17, 31, 31, 71, 88, 94, 98]
+                        }
+                    ]
+                };
+                ;
+                if (option && typeof option === "object") {
+                    myChart.setOption(option, true);
+                }
+            </script>
+            <div id="container2" style="width: 500px; height:300px; float:left"></div>
+            <script type="text/javascript">
+                var dom = document.getElementById("container2");
+                var myChart = echarts.init(dom);
+                var app = {};
+                option = null;
+                option = {
+                    title: {
+                        text: 'node-2',
+                        left: '0'
+                    },
+                    tooltip : {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'cross',
+                            label: {
+                                backgroundColor: '#6a7985'
+                            }
+                        }
+                    },
+                    legend: {
+                        data:['cpu','内存','网卡','磁盘'],
+                        right: '20'
+                    },
+                    // toolbox: {
+                    //     feature: {
+                    //         saveAsImage: {}
+                    //     }
+                    // },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis : [
+                        {
+                            type : 'category',
+                            boundaryGap : false,
+                            data : ['11:00','11:10','11:20','11:30','11:40','11:50','11:60']
+                        }
+                    ],
+                    yAxis : [
+                        {
+                            type: 'value',  
+                            axisLabel: {  
+                                show: true,  
+                                interval: 'auto',  
+                                formatter: '{value} %'  
+                                },  
+                            show: true  
+                        }
+                    ],
+                    series : [
+                        {
+                            name:'cpu',
+                            type:'line',
+                            data:[8, 14, 64, 79, 81, 84, 85]
+                        },
+                        {
+                            name:'内存',
+                            type:'line',
+                            data:[9, 14, 42, 66, 68, 94, 94]
+                        },
+                        {
+                            name:'网卡',
+                            type:'line',
+                            data:[11, 42, 63, 69, 81, 92, 99]
+                        },
+                        {
+                            name:'磁盘',
+                            type:'line',
+                            data:[9, 42, 56, 65, 67, 67, 95]
+                        }
+                    ]
+                };
+                ;
+                if (option && typeof option === "object") {
+                    myChart.setOption(option, true);
+                }
+            </script>
+            <div id="container3" style="width: 500px; height:300px; float:left"></div>
+            <script type="text/javascript">
+                var dom = document.getElementById("container3");
+                var myChart = echarts.init(dom);
+                var app = {};
+                option = null;
+                option = {
+                    title: {
+                        text: 'node-3',
+                        left: '0'
+                    },
+                    tooltip : {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'cross',
+                            label: {
+                                backgroundColor: '#6a7985'
+                            }
+                        }
+                    },
+                    legend: {
+                        data:['cpu','内存','网卡','磁盘'],
+                        right: '20'
+                    },
+                    // toolbox: {
+                    //     feature: {
+                    //         saveAsImage: {}
+                    //     }
+                    // },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis : [
+                        {
+                            type : 'category',
+                            boundaryGap : false,
+                            data : ['11:00','11:10','11:20','11:30','11:40','11:50','11:60']
+                        }
+                    ],
+                    yAxis : [
+                        {
+                            type: 'value',  
+                            axisLabel: {  
+                                show: true,  
+                                interval: 'auto',  
+                                formatter: '{value} %'  
+                                },  
+                            show: true  
+                        }
+                    ],
+                    series : [
+                        {
+                            name:'cpu',
+                            type:'line',
+                            data:[5, 19, 53, 59, 60, 66, 86]
+                        },
+                        {
+                            name:'内存',
+                            type:'line',
+                            data:[19, 24, 35, 64, 67, 95, 98]
+                        },
+                        {
+                            name:'网卡',
+                            type:'line',
+                            data:[3, 24, 39, 43, 43, 99, 99]
+                        },
+                        {
+                            name:'磁盘',
+                            type:'line',
+                            data:[29, 37, 49, 52, 62, 64, 65]
+                        }
+                    ]
+                };
+                ;
+                if (option && typeof option === "object") {
+                    myChart.setOption(option, true);
+                }
+            </script>
         </div>
     </body>
 </html>
