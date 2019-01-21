@@ -12,6 +12,7 @@
         </style>
         <script src="static/echarts.js"></script>
         <script src="static/overview_usage.js"></script>
+        <script type="text/javascript" src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
     </head>
     <body>
         <div style="width: 1500px; margin: 0 auto;" class="title">
@@ -27,82 +28,30 @@
             <script type="text/javascript">
                 var dom = document.getElementById("container1");
                 var myChart = echarts.init(dom);
-                var options = {
-        title: {
-            text: 'dev-127.0.0.1',
-            left: '0',
-        },
-        tooltip : {
-            trigger: 'axis',
-        },
-        legend: {
-            data:['cpu','memcache'],
-            bottom: 15,
-        },
-        xAxis : [
-            {
-                type : 'category',
-                boundaryGap : false,
-                data : [1,2,3]
-            }
-        ],
-        yAxis : [
-            {
-                type: 'value',  
-                axisLabel: {  
-                    show: true,  
-                    interval: 'auto',  
-                    formatter: '{value} %'  
-                    },
-                show: true  
-            }
-        ],
-        series : [
-            {
-                name:'cpu',
-                type:'line',
-                showSymbol:false,
-                data:[1,2,3],
-                color:'#89cbf4',
-                smooth:0.3,
-            },
-            {
-                name:'memcache',
-                type:'line',
-                showSymbol:false,
-                data:[1,2,3],
-                color:'#F75C2F',
-                smooth:0.3,
-            },
-        ]
-    };
-                // $.ajax({
-                // cache: false,
-                // type: "GET",
-                // url: "/overview",
-                // data: null,
-                // dataType : "json",
-                // async: false,
-                // error: function(request) {
-                //     alert("发送请求失败！");
-                // },
-                // success: function(result) {
-                //     // for (i = 0, max = result.x_len.length; i < max; i++) {
-                //     //     option.xAxis[0].data.push(result.x_len[i]);
-                //     //     option.series[0].data.push(parseFloat(result.cpu_list[i])); 
-                //     //     option.series[1].data.push(parseFloat(result.mem_list[i])); 
-                //     // };
-                //     option.xAxis[0].data=result.x_len;
-                //     option.series[0].data=result.cpu_list; 
-                //     option.series[1].data=result.mem_list; 
-
-                // }
-                // });
-                if (option && typeof option === "object") {
-                    myChart.setOption(option, true);
-                }
+                var node = 'acer_127.0.0.1'
+                option = def_option(node);
+                $.ajax({
+                    type: "GET",
+                    url: "/overview",
+                    data: null,
+                    dataType : "json",
+                    success: function(result) {
+                        // option.xAxis[0].data=result.x_len;
+                        // option.series[0].data=result.cpu_list; 
+                        // option.series[1].data=result.mem_list; 
+                        // for (i = 0, max = result.x_len.length; i < max; i++) {
+                        for (i = 0, max = result.time_list.length; i < max; i++) {
+                        option.xAxis[0].data.push(result.time_list[i]);
+                        option.series[0].data.push(parseFloat(result.cpu_list[i])); 
+                        option.series[1].data.push(parseFloat(result.mem_list[i])); 
+                    };
+                    if (option && typeof option === "object") {
+                        myChart.setOption(option, true);
+                    }
+                    }
+                });
             </script>
-            <div id="container2" style="width: 500px; height:300px; float:left"></div>
+            <!-- <div id="container2" style="width: 500px; height:300px; float:left"></div>
             <script type="text/javascript">
                 var dom = document.getElementById("container2");
                 var myChart = echarts.init(dom);
@@ -173,7 +122,7 @@
                 if (option && typeof option === "object") {
                     myChart.setOption(option, true);
                 }
-            </script>
+            </script> -->
         </div>
     </body>
 </html>

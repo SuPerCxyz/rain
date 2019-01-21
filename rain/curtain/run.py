@@ -24,32 +24,37 @@ app = Flask(__name__)
 conn_link = 'mongodb://127.0.0.1:27017/'
 monclient = pymongo.MongoClient(conn_link)
 
+
 def get_data():
     mydb = monclient['rain']
-    mycol = mydb['dev_127.0.0.1']
-    cpu = []
-    mem = []
-    result = mycol.find()
-    for i in result:
-        cpu.append(i['system_info']['cpu']['cpu_percent'][0])
-        mem.append(i['system_info']['memcache']['memcache_percent'])
-    lens = len(result)
-    return cpu, mem, lens
+    mycol = mydb['acer_127.0.0.1']
+    cpu_list = []
+    mem_list = []
+    time_list = []
+    for i in mycol.find().sort('time', -1).limit(100):
+        x = 0
+        cpu_count = i['system_info']['cpu']['cpu_count']
+        for j in i['system_info']['cpu']['cpu_percent']:
+            x += j
+        cpu_list.append(x / cpu_count)
+        mem_list.append(i['system_info']['memcache']['memcache_percent(%)'])
+        tl = time.localtime(i['time'])
+        format_time = time.strftime("%H:%M", tl)
+        time_list.append(format_time)
+    time_list.reverse()
+    return cpu_list, mem_list, time_list
 
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@app.route("/overview", methods=["GET"])
-def weather():
-    if request.method == "GET":
-        cpu, mem, lens = get_data()
-    
-    return jsonify(cpu_list = cpu, mem_list = mem, x_len = lens)
 
-
+@app.route("/overview")
+def overview():
+    cpu_list, mem_list, time_list = get_data()
+    return jsonify(cpu_list=cpu_list, mem_list=mem_list, time_list=time_list)
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)

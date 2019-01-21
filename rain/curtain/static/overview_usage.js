@@ -1,14 +1,14 @@
 var m = 100
-var n = 60
+var n = 3
 
 function randomFiveDiffNum(m, n) {
     function sortNumber(a, b){
         return a - b
     }
     var num = [];
-    for(var i = 0; i < n; i++){
-        num[i] = Math.floor(Math.random()*m);
-        for(var j = 0; j < i; j++){
+    for(var i=0; i<n; i++){
+        num[i] = Math.floor(Math.random() * m);
+        for(var j=0; j<i; j++){
             if(num[i] == num[j]){
                 i--;
             }
@@ -23,7 +23,7 @@ function ls(n) {
     var dateArray = []; 
     var dateTemp; 
     var flag = 1; 
-    for (var i = 0; i < n; i++) {
+    for (var i=0; i<n; i++) {
         dateTemp = (myDate.getMonth() + 1) + "-" + myDate.getDate();
         dateArray.push(dateTemp);
         myDate.setDate(myDate.getDate() + flag);
@@ -37,64 +37,65 @@ function def_option(node) {
             text: node,
             left: '0',
         },
-        tooltip : {
+        tooltip: {
             trigger: 'axis',
         },
         legend: {
-            data:['cpu','memcache','network','disk'],
+            // data: ['cpu', 'memcache', 'network', 'disk'],
+            data: ['cpu', 'memcache'],
             bottom: 15,
         },
-        xAxis : [
+        xAxis: [
             {
-                type : 'category',
-                boundaryGap : false,
-                data : ls(n)
+                type: 'category',
+                boundaryGap: false,
+                data: [],
             }
         ],
-        yAxis : [
+        yAxis: [
             {
                 type: 'value',  
                 axisLabel: {  
                     show: true,  
                     interval: 'auto',  
-                    formatter: '{value} %'  
-                    },
-                show: true  
+                    formatter: '{value} %'
+                },
+                show: true,
             }
         ],
-        series : [
+        series: [
             {
-                name:'cpu',
-                type:'line',
-                showSymbol:false,
-                data:randomFiveDiffNum(m,n),
-                color:'#89cbf4',
-                smooth:0.3,
+                name: 'cpu',
+                type: 'line',
+                showSymbol: false,
+                data: [],
+                color: '#89cbf4',
+                smooth: 0.3,
             },
             {
-                name:'memcache',
-                type:'line',
-                showSymbol:false,
-                data:randomFiveDiffNum(m,n),
-                color:'#F75C2F',
-                smooth:0.3,
+                name: 'memcache',
+                type: 'line',
+                showSymbol: false,
+                data: [],
+                color: '#F75C2F',
+                smooth: 0.3,
             },
-            {
-                name:'network',
-                type:'line',
-                showSymbol:false,
-                data:randomFiveDiffNum(m,n),
-                color:'#00AA90',
-                smooth:0.3,
-            },
-            {
-                name:'disk',
-                type:'line',
-                showSymbol:false,
-                data:randomFiveDiffNum(m,n),
-                color:'#B481BB',
-                smooth:0.3,
-            }
+            // {
+            //     name: 'network',
+            //     type: 'line',
+            //     showSymbol: false,
+            //     data: randomFiveDiffNum(m,n),
+            //     color: '#00AA90',
+            //     smooth: 0.3,
+            // },
+            // {
+            //     name: 'disk',
+            //     type: 'line',
+            //     showSymbol: false,
+            //     data: randomFiveDiffNum(m,n),
+            //     color: '#B481BB',
+            //     smooth: 0.3,
+            // }
         ]
     }
     return options
