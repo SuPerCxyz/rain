@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Rain</title>
+        <link rel="icon" href="static/images/rain_48.ico" type="image/x-icon">
+        <link rel="shortcut icon" href="static/images/rain_48.ico" type="image/x-icon">
+        <style type="text/css">
+            a {
+                text-decoration: none
+            }
+        </style>
+        <script src="static/echarts.js"></script>
+        <script src="static/overview_usage.js"></script>
+    </head>
+    <body>
+        <div style="width: 1500px; margin: 0 auto;" class="title">
+            <h2>
+            <a href="https://github.com/SuPerCxyz/rain" target="_blank">
+                <img src="static/images/Rain.png" alt="Rain logo" width="50"/>
+            </a>
+            <span style="font-family:Arial, Helvetica, sans-serif; color: #89cbf4; font-size: 45px">&nbsp; Rain: simple linux monitoring platform</sub></span>
+        </div>
+        <div style="width: 1500px; margin: 0 auto;" class="body">
+            <p style="font-family:Arial, Helvetica, sans-serif; font-size: 23px">Overview of node resource usage</p>
+            <div id="container1" style="width: 500px; height:300px; float:left" ></div>
+            <script type="text/javascript">
+                var dom = document.getElementById("container1");
+                var myChart = echarts.init(dom);
+                option = def_option('node-1 192.168.0.1');
+                if (option && typeof option === "object") {
+                    myChart.setOption(option, true);
+                }
+            </script>
+            <div id="container2" style="width: 500px; height:300px; float:left"></div>
+            <script type="text/javascript">
+                var dom = document.getElementById("container2");
+                var myChart = echarts.init(dom);
+                option = def_option('node-2 192.168.0.2');
+                if (option && typeof option === "object") {
+                    myChart.setOption(option, true);
+                }
+            </script>
+            <div id="container3" style="width: 500px; height:300px; float:left"></div>
+            <script type="text/javascript">
+                var dom = document.getElementById("container3");
+                var myChart = echarts.init(dom);
+                option = def_option('node-3 192.168.0.3');
+                if (option && typeof option === "object") {
+                    myChart.setOption(option, true);
+                }
+            </script>
+            <div id="container4" style="width: 500px; height:300px; float:left"></div>
+            <script type="text/javascript">
+                var dom = document.getElementById("container4");
+                var myChart = echarts.init(dom);
+                option = def_option('node-4 192.168.0.4');
+                if (option && typeof option === "object") {
+                    myChart.setOption(option, true);
+                }
+            </script>
+            <div id="container5" style="width: 500px; height:300px; float:left"></div>
+            <script type="text/javascript">
+                var dom = document.getElementById("container5");
+                var myChart = echarts.init(dom);
+                option = def_option('node-5 192.168.0.5');
+                if (option && typeof option === "object") {
+                    myChart.setOption(option, true);
+                }
+            </script>
+            <div id="container6" style="width: 500px; height:300px; float:left"></div>
+            <script type="text/javascript">
+                var dom = document.getElementById("container6");
+                var myChart = echarts.init(dom);
+                option = def_option('node-6 192.168.0.6');
+                if (option && typeof option === "object") {
+                    myChart.setOption(option, true);
+                }
+            </script>
+            <div id="container7" style="width: 500px; height:300px; float:left"></div>
+            <script type="text/javascript">
+                var dom = document.getElementById("container7");
+                var myChart = echarts.init(dom);
+                option = def_option('node-7 192.168.0.7');
+                if (option && typeof option === "object") {
+                    myChart.setOption(option, true);
+                }
+            </script>
+            <div id="container8" style="width: 500px; height:300px; float:left"></div>
+            <script type="text/javascript">
+                var dom = document.getElementById("container8");
+                var myChart = echarts.init(dom);
+                option = def_option('node-8 192.168.0.8');
+                if (option && typeof option === "object") {
+                    myChart.setOption(option, true);
+                }
+            </script>
+            <div id="container9" style="width: 500px; height:300px; float:left"></div>
+            <script type="text/javascript">
+                var dom = document.getElementById("container9");
+                var myChart = echarts.init(dom);
+                option = def_option('node-9 192.168.0.9');
+                if (option && typeof option === "object") {
+                    myChart.setOption(option, true);
+                }
+            </script>
+        </div>
+    </body>
+</html>
