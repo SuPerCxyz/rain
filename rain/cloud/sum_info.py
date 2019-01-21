@@ -120,5 +120,6 @@ class SumInfo(object):
             if len(self.server_info.keys()) == len(collect_list):
                 break
             time.sleep(0.1)
+        self.server_info['time'] = int(time.time())
         logger.info('Successful data collection.')
         return self.server_info
