@@ -75,7 +75,7 @@ class ScoketServer(object):
                 break
             else:
                 conn.send('Retry')
-                logger.info('Did not receive full data from {}.'.format(addr))
+                logger.warning('Did not receive full data from {}.'.format(addr))
             time.sleep(0.3)
             loop -= 1
         # conn.close()
