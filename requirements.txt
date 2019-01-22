@@ -3,3 +3,4 @@ getdevinfo==1.0.4
 docker==3.6.0
 oslo.config==6.7.0
 Flask==1.0.2
+pymongo==3.7.1
