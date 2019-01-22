@@ -10,7 +10,7 @@
                 text-decoration: none
             }
         </style>
-        <script src="static/echarts.js"></script>
+        <script src="https://www.echartsjs.com/dist/echarts.simple.min.js"></script>
         <script src="static/overview_usage.js"></script>
         <script type="text/javascript" src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
     </head>
@@ -28,7 +28,7 @@
             <script type="text/javascript">
                 var dom = document.getElementById("container1");
                 var myChart = echarts.init(dom);
-                var node = 'acer_127.0.0.1'
+                var node = 'dev_127.0.0.1'
                 option = def_option(node);
                 $.ajax({
                     type: "GET",

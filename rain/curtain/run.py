@@ -27,7 +27,7 @@ monclient = pymongo.MongoClient(conn_link)
 
 def get_data():
     mydb = monclient['rain']
-    mycol = mydb['acer_127.0.0.1']
+    mycol = mydb['dev_127.0.0.1']
     cpu_list = []
     mem_list = []
     time_list = []
