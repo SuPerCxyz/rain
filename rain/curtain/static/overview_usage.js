@@ -31,6 +31,19 @@ function ls(n) {
     return dateArray
 }
 
+function get_node_list() {
+    $.ajax({
+        type: "GET",
+        url: "/node_list",
+        data: null,
+        dataType : "json",
+        success: function(result) {
+            return result
+        }
+    });
+}
+
+
 function def_option(node, myChart) {
     var option = {}
     option = {

@@ -25,6 +25,11 @@ conn_link = 'mongodb://127.0.0.1:27017/'
 monclient = pymongo.MongoClient(conn_link)
 
 
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+
 def get_data(node, count):
     mydb = monclient['rain']
     mycol = mydb[node]
@@ -45,21 +50,28 @@ def get_data(node, count):
     return cpu_list, mem_list, time_list
 
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-
 @app.route("/overview", methods=["POST"])
 def overview():
     if request.method == "POST":
         request_json = request.get_json(force=True)
-        print request_json
         cpu_list, mem_list, time_list = get_data(request_json['nodes'],
                                                  request_json['count'])
         return jsonify(cpu_list=cpu_list,
                        mem_list=mem_list,
                        time_list=time_list)
+
+
+def get_node_list():
+    mydb = monclient['rain']
+    node_list = mydb.list_collection_names()
+    return node_list
+
+
+@app.route("/node_list", methods=["GET"])
+def node_list():
+    if request.method == "GET":
+        print get_node_list()
+        return jsonify(node_lists = get_node_list())
 
 
 if __name__ == '__main__':
