@@ -29,7 +29,14 @@
                 var dom = document.getElementById("container1");
                 var myChart = echarts.init(dom);
                 var node = 'dev_127.0.0.1'
-                def_option(node);
+                def_option(node, myChart);
+            </script>
+            <div id="container2" style="width: 500px; height:300px; float:left" ></div>
+            <script type="text/javascript">
+                var dom = document.getElementById("container2");
+                var myChart = echarts.init(dom);
+                var node = 'dev_127.0.0.2'
+                def_option(node, myChart);
             </script>
         </div>
     </body>

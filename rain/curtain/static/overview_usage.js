@@ -31,8 +31,9 @@ function ls(n) {
     return dateArray
 }
 
-function def_option(node) {
-    var option = {
+function def_option(node, myChart) {
+    var option = {}
+    option = {
         title: {
             text: node,
             left: '0',
@@ -98,7 +99,8 @@ function def_option(node) {
             // }
         ]
     }
-    var datas ={
+    var datas = {}
+    datas ={
         'nodes': node,
         'count': 200
     }
