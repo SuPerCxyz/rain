@@ -25,13 +25,13 @@ conn_link = 'mongodb://127.0.0.1:27017/'
 monclient = pymongo.MongoClient(conn_link)
 
 
-def get_data():
+def get_data(node, count):
     mydb = monclient['rain']
-    mycol = mydb['dev_127.0.0.1']
+    mycol = mydb[node]
     cpu_list = []
     mem_list = []
     time_list = []
-    for i in mycol.find().sort('time', -1).limit(100):
+    for i in mycol.find().sort('time', -1).limit(count):
         x = 0
         cpu_count = i['system_info']['cpu']['cpu_count']
         for j in i['system_info']['cpu']['cpu_percent']:
@@ -50,10 +50,16 @@ def index():
     return render_template('index.html')
 
 
-@app.route("/overview")
+@app.route("/overview", methods=["POST"])
 def overview():
-    cpu_list, mem_list, time_list = get_data()
-    return jsonify(cpu_list=cpu_list, mem_list=mem_list, time_list=time_list)
+    if request.method == "POST":
+        request_json = request.get_json(force=True)
+        print request_json
+        cpu_list, mem_list, time_list = get_data(request_json['nodes'],
+                                                 request_json['count'])
+        return jsonify(cpu_list=cpu_list,
+                       mem_list=mem_list,
+                       time_list=time_list)
 
 
 if __name__ == '__main__':

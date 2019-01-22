@@ -32,7 +32,7 @@ function ls(n) {
 }
 
 function def_option(node) {
-    var options = {
+    var option = {
         title: {
             text: node,
             left: '0',
@@ -98,5 +98,24 @@ function def_option(node) {
             // }
         ]
     }
-    return options
+    var datas ={
+        'nodes': node,
+        'count': 200
+    }
+    $.ajax({
+        type: "POST",
+        url: "/overview",
+        data: JSON.stringify(datas),
+        dataType : "json",
+        success: function(result) {
+            for (i = 0, max = result.time_list.length; i < max; i++) {
+            option.xAxis[0].data.push(result.time_list[i]);
+            option.series[0].data.push(parseFloat(result.cpu_list[i])); 
+            option.series[1].data.push(parseFloat(result.mem_list[i])); 
+        };
+            if (option && typeof option === "object") {
+                myChart.setOption(option, true);
+            }
+        }
+    });
 }
