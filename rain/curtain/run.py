@@ -36,7 +36,7 @@ def get_data(node, count):
         cpu_count = i['system_info']['cpu']['cpu_count']
         for j in i['system_info']['cpu']['cpu_percent']:
             x += j
-        cpu_list.append(x / cpu_count)
+        cpu_list.append('%.2f' % (x/cpu_count))
         mem_list.append(i['system_info']['memcache']['memcache_percent(%)'])
         tl = time.localtime(i['time'])
         format_time = time.strftime("%H:%M", tl)
@@ -63,4 +63,4 @@ def overview():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=82, debug=True)
