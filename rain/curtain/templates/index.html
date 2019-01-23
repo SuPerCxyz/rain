@@ -10,9 +10,6 @@
                 text-decoration: none
             }
         </style>
-        <script src="https://www.echartsjs.com/dist/echarts.min.js"></script>
-        <script src="static/overview_usage.js"></script>
-        <script type="text/javascript" src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
     </head>
     <body>
         <div style="width: 1500px; margin: 0 auto;" class="title">
@@ -22,46 +19,14 @@
             </a>
             <span style="font-family:Arial, Helvetica, sans-serif; color: #89cbf4; font-size: 45px">&nbsp; Rain: simple linux monitoring platform</sub></span>
         </div>
-        <div style="width: 1500px; margin: 0 auto;" class="overview">
+        <div style="width: 1500px; margin: 0 auto;" class="overview" id="overviews">
             <p style="font-family:Arial, Helvetica, sans-serif; font-size: 23px">Overview of node resource usage</p>
-            <div id="container1" style="width: 500px; height:300px; float:left" >
-                <script type="text/javascript">
-                    var dom = document.getElementById("container1");
-                    var myChart = echarts.init(dom);
-                    var node = 'tencent_172.17.0.8';
-                    def_option(node, myChart);
-                </script>
-            </div>
-            <div id="container2" style="width: 500px; height:300px; float:left" >
-                <script type="text/javascript">
-                    var dom = document.getElementById("container2");
-                    var myChart = echarts.init(dom);
-                    var node = 'dev_218.94.118.90';
-                    def_option(node, myChart);
-                </script>
-            </div>
-            <div id="container3" style="width: 500px; height:300px; float:left" >
-                <script type="text/javascript">
-                    var node = 'google_35.229.182.20';
-                    test(node, "container3")
-                </script>
-            </div>
-            <div id="container4" style="width: 500px; height:300px; float:left" >
-                <script type="text/javascript">
-                    var dom = document.getElementById("container4");
-                    var myChart = echarts.init(dom);
-                    var node = 'bwh_172.96.228.28';
-                    def_option(node, myChart);
-                </script>
-            </div>
-            <div id="container5" style="width: 500px; height:300px; float:left" >
-                <script type="text/javascript">
-                    var dom = document.getElementById("container5");
-                    var myChart = echarts.init(dom);
-                    var node = 'acer_121.237.49.206';
-                    def_option(node, myChart);
-                </script>
-            </div>
+            <script type="text/javascript" src="https://www.echartsjs.com/dist/echarts.min.js"></script>
+            <script type="text/javascript" src="static/overview_usage.js"></script>
+            <script type="text/javascript" src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+            <script>
+                overview()
+            </script>
         </div>
     </body>
 </html>

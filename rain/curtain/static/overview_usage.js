@@ -17,6 +17,7 @@ function randomFiveDiffNum(m, n) {
     return num.sort(sortNumber);
 }
 
+
 function ls(n) {
     var myDate = new Date();
     myDate.setDate(myDate.getDate() - n);
@@ -31,6 +32,7 @@ function ls(n) {
     return dateArray
 }
 
+
 function get_node_list() {
     $.ajax({
         type: "GET",
@@ -43,11 +45,6 @@ function get_node_list() {
     });
 }
 
-function test(node, id) {
-    var dom = document.getElementById(id);
-    var myChart = echarts.init(dom);
-    def_option(node, myChart)
-}
 
 function def_option(node, myChart) {
     var option = {}
@@ -99,22 +96,6 @@ function def_option(node, myChart) {
                 color: '#F75C2F',
                 smooth: 0.3,
             },
-            // {
-            //     name: 'network',
-            //     type: 'line',
-            //     showSymbol: false,
-            //     data: randomFiveDiffNum(m,n),
-            //     color: '#00AA90',
-            //     smooth: 0.3,
-            // },
-            // {
-            //     name: 'disk',
-            //     type: 'line',
-            //     showSymbol: false,
-            //     data: randomFiveDiffNum(m,n),
-            //     color: '#B481BB',
-            //     smooth: 0.3,
-            // }
         ]
     }
     var datas = {}
@@ -138,4 +119,26 @@ function def_option(node, myChart) {
             }
         }
     });
+}
+
+function overview() {
+    $.ajax({
+        type:"GET",
+        url:"/node_list",
+        dataType: "json",  
+        success: function(data){
+            $.each(data.node_lists, function(i, j) {
+                var newdiv = document.createElement("div");
+                newdiv.id=j;
+                newdiv.innerText=j;
+                newdiv.style.width="500px";
+                newdiv.style.height="300px";
+                newdiv.style.cssFloat="left";
+                document.getElementById("overviews").appendChild(newdiv);
+                var dom = document.getElementById(j);
+                var myChart = echarts.init(dom);
+                def_option(j, myChart);
+            })
+        }
+    }); 
 }
