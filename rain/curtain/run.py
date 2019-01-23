@@ -36,6 +36,7 @@ def get_data(node, count):
     cpu_list = []
     mem_list = []
     time_list = []
+    result = {}
     for i in mycol.find().sort('time', -1).limit(count):
         x = 0
         cpu_count = i['system_info']['cpu']['cpu_count']
@@ -47,31 +48,35 @@ def get_data(node, count):
         format_time = time.strftime("%H:%M", tl)
         time_list.append(format_time)
     time_list.reverse()
-    return cpu_list, mem_list, time_list
+    result = {
+        'cpu_list': cpu_list,
+        'mem_list': mem_list,
+        'time_list': time_list
+    }
+    return result
+
+
+def get_node_info(count):
+    all_result = {}
+    mydb = monclient['rain']
+    node_list = mydb.list_collection_names()
+    for node in node_list:
+        all_result[node] = get_data(node, count)
+    return all_result
 
 
 @app.route("/overview", methods=["POST"])
 def overview():
     if request.method == "POST":
         request_json = request.get_json(force=True)
-        cpu_list, mem_list, time_list = get_data(request_json['nodes'],
-                                                 request_json['count'])
-        return jsonify(cpu_list=cpu_list,
-                       mem_list=mem_list,
-                       time_list=time_list)
+        return get_node_info(request_json['count'])
 
 
-def get_node_list():
-    mydb = monclient['rain']
-    node_list = mydb.list_collection_names()
-    return node_list
-
-
-@app.route("/node_list", methods=["GET"])
-def node_list():
-    if request.method == "GET":
-        print get_node_list()
-        return jsonify(node_lists = get_node_list())
+# @app.route("/node_list", methods=["GET"])
+# def node_list():
+#     if request.method == "GET":
+#         print get_node_list()
+#         return jsonify(node_lists = get_node_list())
 
 
 if __name__ == '__main__':

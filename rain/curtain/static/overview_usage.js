@@ -43,6 +43,11 @@ function get_node_list() {
     });
 }
 
+function test(node, id) {
+    var dom = document.getElementById(id);
+    var myChart = echarts.init(dom);
+    def_option(node, myChart)
+}
 
 function def_option(node, myChart) {
     var option = {}
