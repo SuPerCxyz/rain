@@ -78,9 +78,10 @@ def node_status():
     for node in node_list:
         mydb = monclient['rain']
         mycol = mydb[node]
-        status = mycol.find_one()
+        status = mycol.find().sort('time', -1).limit(1).next()
         status.pop('_id')
         now_time = int(time.time())
+        print status['time']
         if (now_time - status['time']) > 300:
             status['status'] = 'Lost connection'
         else:
