@@ -52,6 +52,7 @@ function def_option(node, myChart) {
         title: {
             text: node,
             left: '0',
+            link:"https://github.com/SuPerCxyz/rain",
         },
         tooltip: {
             trigger: 'axis',
