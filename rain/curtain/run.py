@@ -74,17 +74,19 @@ def node_list():
 @app.route("/node_status", methods=["GET"])
 def node_status():
     node_list = get_node_list()
-    status_result = {}
+    status_result = []
     for node in node_list:
         mydb = monclient['rain']
         mycol = mydb[node]
+        status = mycol.find_one()
+        status.pop('_id')
         now_time = int(time.time())
-        db_time = mycol.find().sort('time', -1).limit(1).next()['time']
-        if now_time - db_time > 300:
-            status_result[node] = 'Lost connection'
+        if (now_time - status['time']) > 300:
+            status['status'] = 'Lost connection'
         else:
-            status_result[node] = 'Online'
-    return jsonify(node_status=status_result)
+            status['status'] = 'Online'
+        status_result.append(status)
+    return jsonify(nodes_status=status_result)
 
 
 if __name__ == '__main__':

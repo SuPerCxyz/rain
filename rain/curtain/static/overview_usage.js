@@ -1,37 +1,6 @@
 var m = 100
 var n = 3
 
-function randomFiveDiffNum(m, n) {
-    function sortNumber(a, b){
-        return a - b
-    }
-    var num = [];
-    for(var i=0; i<n; i++){
-        num[i] = Math.floor(Math.random() * m);
-        for(var j=0; j<i; j++){
-            if(num[i] == num[j]){
-                i--;
-            }
-        }
-    }
-    return num.sort(sortNumber);
-}
-
-
-function ls(n) {
-    var myDate = new Date();
-    myDate.setDate(myDate.getDate() - n);
-    var dateArray = []; 
-    var dateTemp; 
-    var flag = 1; 
-    for (var i=0; i<n; i++) {
-        dateTemp = (myDate.getMonth() + 1) + "-" + myDate.getDate();
-        dateArray.push(dateTemp);
-        myDate.setDate(myDate.getDate() + flag);
-    }
-    return dateArray
-}
-
 
 function get_node_list() {
     $.ajax({
@@ -131,7 +100,7 @@ function overview() {
             $.each(data.node_lists, function(i, j) {
                 var newdiv = document.createElement("div");
                 newdiv.id=j;
-                newdiv.innerText=j;
+                // newdiv.innerText=j;
                 newdiv.style.width="500px";
                 newdiv.style.height="300px";
                 newdiv.style.cssFloat="left";
@@ -139,6 +108,54 @@ function overview() {
                 var dom = document.getElementById(j);
                 var myChart = echarts.init(dom);
                 def_option(j, myChart);
+            })
+        }
+    }); 
+}
+
+
+
+function node_status() {
+    $.ajax({
+        type:"GET",
+        url:"/node_status",
+        dataType: "json",  
+        success: function(data){
+            $.each(data.nodes_status, function(i, j) {
+                var newdiv = document.createElement("div");
+                newdiv.id=j.time;
+                newdiv.style.width="500px";
+                newdiv.style.height="40px";
+                newdiv.style.cssFloat="left";
+                document.getElementById("status").appendChild(newdiv);
+                var img = document.createElement("img");
+                img.width="23";
+                img.style.verticalAlign="middle";
+                if (j.status=='Online') {
+                    img.src="/static/images/poweron.png";
+                }
+                else {
+                    img.src="/static/images/poweroff.png";
+                }
+                newdiv.append(img);
+                var span = document.createElement("span");
+                span.style.fontFamily="font-family:Arial, Helvetica, sans-serif";
+                span.style.fontSize="25px";
+                span.style.verticalAlign="middle";
+                span.style.whiteSpace="pre-wrap";
+                span.innerText='  ' + j.hostname + '_' + j.ip_address;
+                newdiv.append(span);
+                // var span1 = document.createElement("span");
+                // span1.style.fontFamily="font-family:Arial, Helvetica, sans-serif";
+                // span1.style.fontSize="20px";
+                // span1.style.verticalAlign="middle";
+                // span1.style.whiteSpace="pre-wrap";
+                // span1.style.display="block";
+                // var cpu_count=j.system_info.cpu.cpu_count
+                // var cpu_percent=j.system_info.cpu.cpu_percent
+                // var load=j.system_info.cpu.load_1
+                // span1.innerText='CPU  count:' + cpu_count + ', percent:' + cpu_percent + ', system load:' + load;
+                // newdiv.append(span1);
             })
         }
     }); 
