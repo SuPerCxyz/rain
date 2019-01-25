@@ -42,7 +42,7 @@ def get_data(node, count):
         for j in i['system_info']['cpu']['cpu_percent']:
             x += j
         cpu_list.append('%.2f' % (x/cpu_count))
-        mem_list.append(i['system_info']['memcache']['memcache_percent(%)'])
+        mem_list.append(i['system_info']['memcache']['memcache_percent'])
         tl = time.localtime(i['time'])
         format_time = time.strftime("%H:%M", tl)
         time_list.append(format_time)

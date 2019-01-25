@@ -38,9 +38,9 @@ class SystemInfo(object):
             sys_load_5 = round(float(load_5)/cpu_count * 100, 2)
             sys_load_15 = round(float(load_15)/cpu_count * 100, 2)
             system_load = {
-                'sys_load_1(%)': sys_load_1,
-                'sys_load_5(%)': sys_load_5,
-                'sys_load_15(%)': sys_load_15,
+                'sys_load_1': sys_load_1,
+                'sys_load_5': sys_load_5,
+                'sys_load_15': sys_load_15,
                 'load_1': load_1,
                 'load_5': load_5,
                 'load_15': load_15
@@ -99,12 +99,12 @@ class SystemInfo(object):
         memcache_cached = memcache_info.cached / 1024 ** 2
         memcache_percent = memcache_info.percent
         memcache_info_dict = {
-            'memcache_total(MB)': memcache_total,
-            'memcache_used(MB)': memcache_used,
-            'memcache_available(MB)': memcache_available,
-            'memcache_buff(MB)': memcache_buff,
-            'memcache_cached(MB)': memcache_cached,
-            'memcache_percent(%)': memcache_percent
+            'memcache_total_MB': memcache_total,
+            'memcache_used_MB': memcache_used,
+            'memcache_available_MB': memcache_available,
+            'memcache_buff_MB': memcache_buff,
+            'memcache_cached_MB': memcache_cached,
+            'memcache_percent': memcache_percent
         }
         logger.info('Collect memory related information.')
         return memcache_info_dict
