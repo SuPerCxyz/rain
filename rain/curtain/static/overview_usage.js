@@ -139,7 +139,7 @@ function node_status() {
                 }
                 newdiv.append(img);
                 var span = document.createElement("span");
-                span.style.fontFamily="font-family:Arial, Helvetica, sans-serif";
+                span.style.fontFamily="Arial, Helvetica, sans-serif";
                 span.style.fontSize="25px";
                 span.style.verticalAlign="middle";
                 span.style.whiteSpace="pre-wrap";

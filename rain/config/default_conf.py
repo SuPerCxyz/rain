@@ -24,7 +24,7 @@ default_opt_opts = [
                default='',
                help='Monitor node port.'),
     cfg.IntOpt('socket_retry',
-               default=3,
+               default=15,
                help='Socket client check information times.'),
     cfg.StrOpt('mongo_address',
                default='localhost',

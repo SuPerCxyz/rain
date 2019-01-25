@@ -81,7 +81,6 @@ def node_status():
         status = mycol.find().sort('time', -1).limit(1).next()
         status.pop('_id')
         now_time = int(time.time())
-        print status['time']
         if (now_time - status['time']) > 300:
             status['status'] = 'Lost connection'
         else:
