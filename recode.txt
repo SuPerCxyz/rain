@@ -1,0 +1,26 @@
+Server:
+    
+from rain.surface import socket_server
+a=socket_server.ScoketServer()
+a.socket_service()
+
+
+Client:
+
+import time
+from rain.cloud import sum_info
+a=sum_info.SumInfo()
+from rain.cloud import socket_client
+c=socket_client.SocketClient()
+while True:
+    b=a.sum_info()
+    c.send_data(b)
+    time.sleep(30)
+
+mongo
+
+import pymongo
+conn_link = 'mongodb://127.0.0.1:27017/'
+monclient = pymongo.MongoClient(conn_link)
+mydb = monclient['rain']
+mydb.list_collection_names()
