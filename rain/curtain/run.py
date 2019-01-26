@@ -30,6 +30,17 @@ def index():
     return render_template('index.html')
 
 
+def recode_time(node, count):
+    mydb = monclient['rain']
+    mycol = mydb[node]
+    time_list = []
+    for i in mycol.find().limit(-count):
+        tl = time.localtime(i['time'])
+        format_time = time.strftime("%H:%M", tl)
+        time_list.append(format_time)
+    return time_list
+
+
 def get_data(node, count):
     mydb = monclient['rain']
     mycol = mydb[node]
@@ -99,7 +110,7 @@ def cpu_info(node, count):
         cpu_dict[key_name] = []
         for one_data in mycol.find().limit(-count):
             cpu_dict[key_name].append(
-                one_data['system_info']['cpu']['cpu_percent'][single_core -1])
+                one_data['system_info']['cpu']['cpu_percent'][i -1])
     return cpu_dict
 
 
@@ -137,7 +148,16 @@ def cpu_div(node, count):
     div_dict['system_load'] = system_load(node, count)
     div_dict['cpu_detail_info'] = cpu_detail_info(node)
     div_dict['cpu_info'] = cpu_info(node, count)
+    div_dict['time'] = recode_time(node, count)
     return div_dict
+
+
+@app.route("/cpu_detail", methods=["POST"])
+def cpu():
+    if request.method == "POST":
+        request_json = request.get_json(force=True)
+        result = cpu_div(request_json['nodes'], request_json['count'])
+        return jsonify(cpu_detail=result)
 
 
 if __name__ == '__main__':

@@ -1,6 +1,28 @@
 var m = 100
 var n = 3
 
+var color_list = [
+    "#2ec7c9",
+    "#b6a2de",
+    "#5ab1ef",
+    "#ffb980",
+    "#d87a80",
+    "#8d98b3",
+    "#e5cf0d",
+    "#97b552",
+    "#95706d",
+    "#dc69aa",
+    "#07a2a4",
+    "#9a7fd1",
+    "#588dd5",
+    "#f5994e",
+    "#c05050",
+    "#59678c",
+    "#c9ab00",
+    "#7eb00a",
+    "#6f5553",
+    "#c14089"
+]
 
 function get_node_list() {
     $.ajax({
@@ -18,6 +40,7 @@ function get_node_list() {
 function def_option(node, myChart) {
     var option = {}
     option = {
+        color: color_list,
         title: {
             text: node,
             left: '0',
@@ -55,7 +78,6 @@ function def_option(node, myChart) {
                 type: 'line',
                 showSymbol: false,
                 data: [],
-                color: '#89cbf4',
                 smooth: 0.3,
             },
             {
@@ -63,7 +85,6 @@ function def_option(node, myChart) {
                 type: 'line',
                 showSymbol: false,
                 data: [],
-                color: '#F75C2F',
                 smooth: 0.3,
             },
         ]
@@ -80,16 +101,17 @@ function def_option(node, myChart) {
         dataType : "json",
         success: function(result) {
             for (i = 0, max = result.time_list.length; i < max; i++) {
-            option.xAxis[0].data.push(result.time_list[i]);
-            option.series[0].data.push(parseFloat(result.cpu_list[i])); 
-            option.series[1].data.push(parseFloat(result.mem_list[i])); 
-        };
+                option.xAxis[0].data.push(result.time_list[i]);
+                option.series[0].data.push(parseFloat(result.cpu_list[i])); 
+                option.series[1].data.push(parseFloat(result.mem_list[i])); 
+            };
             if (option && typeof option === "object") {
                 myChart.setOption(option, true);
             }
         }
     });
 }
+
 
 function overview() {
     $.ajax({
@@ -112,7 +134,6 @@ function overview() {
         }
     }); 
 }
-
 
 
 function node_status() {
@@ -159,4 +180,80 @@ function node_status() {
             })
         }
     }); 
+}
+
+function cpu_detail() {
+    var CPU = {
+        color: color_list,
+        // title: {
+        //     text: 'acer_121.237.51.0',
+        //     left: '0',
+        // },
+        tooltip: {
+            trigger: 'axis',
+        },
+        yAxis: [
+            {
+                type: 'value',  
+                axisLabel: {  
+                    show: true,  
+                    interval: 'auto',  
+                    formatter: '{value} %',
+                },
+                show: true,
+            }
+        ],
+        grid: {
+            top: '10',
+            left: '3%',
+            right: '1%',
+        },
+    }
+    var datas = {
+        'nodes': 'acer_121.237.51.0',
+        'count': 50
+    }
+    var cpu_seriess = new Array()
+    var count = 0
+    var legend_list = new Array()
+    $.ajax({
+        type:"POST",
+        url:"/cpu_detail",
+        data: JSON.stringify(datas),
+        dataType: "json", 
+        success: function(data){
+            $.each(data.cpu_detail.cpu_info, function(i, j) {
+                legend_list[count] = i;
+                var cpu_series = {
+                    name: i,
+                    type: 'line',
+                    showSymbol: false,
+                    data: j,
+                    smooth: 0.3,
+                };
+                cpu_seriess[count] = cpu_series;
+                count += 1;
+            });
+            CPU['legend'] = {
+                data: legend_list,
+                bottom: 0,
+            };
+            var x = [{
+                type: 'category',
+                boundaryGap: false,
+                data: data.cpu_detail.time,
+            }]
+            CPU['xAxis'] = x
+            CPU['series'] = cpu_seriess;
+            console.log(CPU['series'])
+            var newdiv = document.createElement("cpu");
+            newdiv.id='cpu';
+            newdiv.style.width="1500px";
+            newdiv.style.height="300px";
+            newdiv.style.cssFloat="left";
+            var dom1 = document.getElementById('cpu_detail').appendChild(newdiv);
+            var myChart = echarts.init(dom1);
+            myChart.setOption(CPU, true);
+        }
+    });
 }
