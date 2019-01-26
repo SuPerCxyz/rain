@@ -27,8 +27,4 @@ def server():
 
 
 if __name__ == "__main__":
-    args = sys.argv[1]
-    if args == 'client':
-        print '111'
-    elif args == 'server':
-        print '222'
+    client()
