@@ -36,7 +36,7 @@ def get_data(node, count):
     cpu_list = []
     mem_list = []
     time_list = []
-    for i in mycol.find().sort('time', -1).limit(count):
+    for i in mycol.find().limit(-count):
         x = 0
         cpu_count = i['system_info']['cpu']['cpu_count']
         for j in i['system_info']['cpu']['cpu_percent']:
@@ -46,7 +46,6 @@ def get_data(node, count):
         tl = time.localtime(i['time'])
         format_time = time.strftime("%H:%M", tl)
         time_list.append(format_time)
-    time_list.reverse()
     return cpu_list, mem_list, time_list
 
 
@@ -87,6 +86,58 @@ def node_status():
             status['status'] = 'Online'
         status_result.append(status)
     return jsonify(nodes_status=status_result)
+
+
+def cpu_info(node, count):
+    mydb = monclient['rain']
+    mycol = mydb[node]
+    cpu_dict = {}
+    one_result = mycol.find().limit(1).next()
+    core_count = one_result['system_info']['cpu']['cpu_count']
+    for i in range(1, core_count + 1):
+        key_name = 'core_' + str(i)
+        cpu_dict[key_name] = []
+        for one_data in mycol.find().limit(-count):
+            cpu_dict[key_name].append(
+                one_data['system_info']['cpu']['cpu_percent'][single_core -1])
+    return cpu_dict
+
+
+def system_load(node, count):
+    mydb = monclient['rain']
+    mycol = mydb[node]
+    load_dict = {
+        'sys_load_1': [],
+        'sys_load_5': [],
+        'sys_load_15': [],
+    }
+    for one_data in mycol.find().limit(-count):
+        db_dict = one_data['system_info']['cpu']['system_load']
+        load_dict['sys_load_1'].append(db_dict['sys_load_1'])
+        load_dict['sys_load_5'].append(db_dict['sys_load_5'])
+        load_dict['sys_load_15'].append(db_dict['sys_load_15'])
+    return load_dict
+
+
+def cpu_detail_info(node):
+    mydb = monclient['rain']
+    mycol = mydb[node]
+    one_result = mycol.find().limit(-1).next()
+    cpu_detail_dict = {}
+    core_count = one_result['system_info']['cpu']['cpu_count']
+    details = one_result['system_info']['cpu']['cpu_percent_info']
+    for i in range(1, core_count + 1):
+        key_name = 'core_' + str(i)
+        cpu_detail_dict[key_name] = details[i -1]
+    return cpu_detail_dict
+
+
+def cpu_div(node, count):
+    div_dict = {}
+    div_dict['system_load'] = system_load(node, count)
+    div_dict['cpu_detail_info'] = cpu_detail_info(node)
+    div_dict['cpu_info'] = cpu_info(node, count)
+    return div_dict
 
 
 if __name__ == '__main__':
