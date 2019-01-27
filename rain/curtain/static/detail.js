@@ -151,7 +151,7 @@ function cpu_detail() {
             }
             var newdiv = document.createElement("cpu");
             newdiv.id='cpu';
-            newdiv.style.width="1500px";
+            newdiv.style.width="750px";
             newdiv.style.height="300px";
             newdiv.style.cssFloat="left";
             var dom1 = document.getElementById('cpu_detail').appendChild(newdiv);
@@ -202,7 +202,7 @@ function cpu_detail() {
             }
             var newdiv2 = document.createElement("sys_load");
             newdiv2.id='sys_load';
-            newdiv2.style.width="1500px";
+            newdiv2.style.width="750px";
             newdiv2.style.height="300px";
             newdiv2.style.cssFloat="left";
             var dom2 = document.getElementById('cpu_detail').appendChild(newdiv2);
@@ -226,7 +226,7 @@ function cpu_detail() {
                 cpu_pie.series[0].data = uasge_data_list
                 var piediv = document.createElement('core_usage')
                 piediv.id='core_usage'
-                piediv.style.width='300px'
+                piediv.style.width='375px'
                 piediv.style.height='350px'
                 piediv.style.cssFloat='left'
                 var dom = document.getElementById('cpu_detail').appendChild(piediv)
