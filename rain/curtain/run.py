@@ -30,14 +30,20 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/detail')
+def detail():
+    return render_template('detail.html')
+
+
 def recode_time(node, count):
     mydb = monclient['rain']
     mycol = mydb[node]
     time_list = []
-    for i in mycol.find().limit(-count):
+    for i in mycol.find().sort("time", -1).limit(-count):
         tl = time.localtime(i['time'])
         format_time = time.strftime("%H:%M", tl)
         time_list.append(format_time)
+    time_list.reverse()
     return time_list
 
 
@@ -46,17 +52,16 @@ def get_data(node, count):
     mycol = mydb[node]
     cpu_list = []
     mem_list = []
-    time_list = []
-    for i in mycol.find().limit(-count):
+    time_list = recode_time(node, count)
+    for i in mycol.find().sort("time", -1).limit(-count):
         x = 0
         cpu_count = i['system_info']['cpu']['cpu_count']
         for j in i['system_info']['cpu']['cpu_percent']:
             x += j
         cpu_list.append('%.2f' % (x/cpu_count))
         mem_list.append(i['system_info']['memcache']['memcache_percent'])
-        tl = time.localtime(i['time'])
-        format_time = time.strftime("%H:%M", tl)
-        time_list.append(format_time)
+    cpu_list.reverse()
+    mem_list.reverse()
     return cpu_list, mem_list, time_list
 
 
@@ -108,9 +113,10 @@ def cpu_info(node, count):
     for i in range(1, core_count + 1):
         key_name = 'core_' + str(i)
         cpu_dict[key_name] = []
-        for one_data in mycol.find().limit(-count):
+        for one_data in mycol.find().sort("time", -1).limit(-count):
             cpu_dict[key_name].append(
                 one_data['system_info']['cpu']['cpu_percent'][i -1])
+        cpu_dict[key_name].reverse()
     return cpu_dict
 
 
@@ -122,18 +128,21 @@ def system_load(node, count):
         'sys_load_5': [],
         'sys_load_15': [],
     }
-    for one_data in mycol.find().limit(-count):
+    for one_data in mycol.find().sort("time", -1).limit(-count):
         db_dict = one_data['system_info']['cpu']['system_load']
         load_dict['sys_load_1'].append(db_dict['sys_load_1'])
         load_dict['sys_load_5'].append(db_dict['sys_load_5'])
         load_dict['sys_load_15'].append(db_dict['sys_load_15'])
+    load_dict['sys_load_1'].reverse()
+    load_dict['sys_load_5'].reverse()
+    load_dict['sys_load_15'].reverse()
     return load_dict
 
 
 def cpu_detail_info(node):
     mydb = monclient['rain']
     mycol = mydb[node]
-    one_result = mycol.find().limit(-1).next()
+    one_result = mycol.find().sort("time", -1).limit(-1).next()
     cpu_detail_dict = {}
     core_count = one_result['system_info']['cpu']['cpu_count']
     details = one_result['system_info']['cpu']['cpu_percent_info']
@@ -141,7 +150,6 @@ def cpu_detail_info(node):
         key_name = 'core_' + str(i)
         cpu_detail_dict[key_name] = details[i -1]
     return cpu_detail_dict
-
 
 def cpu_div(node, count):
     div_dict = {}
@@ -156,7 +164,7 @@ def cpu_div(node, count):
 def cpu():
     if request.method == "POST":
         request_json = request.get_json(force=True)
-        result = cpu_div(request_json['nodes'], request_json['count'])
+        result = cpu_div(request_json['nodes'], int(request_json['count']))
         return jsonify(cpu_detail=result)
 
 

@@ -24,6 +24,51 @@ var color_list = [
     "#c14089"
 ]
 
+var pie_tmp = { 
+    color: color_list,
+    title: {
+        left: 'center',
+        textStyle: {
+            color: '#ccc',
+            fontSize: '25',
+        },
+    },
+    tooltip : {
+        trigger: 'item',
+        formatter: "{a} <br/>{b} : {c} ({d}%)"
+    },
+    legend: {
+        bottom: 0,
+        data:['iowait','system','user','idle']
+    },
+    series : [
+        {
+            name:'半径模式',
+            type:'pie',
+            radius : [50, 120],
+            center : '50%',
+            roseType : 'radareaius',
+            label: {
+                normal: {
+                    show: false
+                },
+                emphasis: {
+                    show: true
+                }
+            },
+            lableLine: {
+                normal: {
+                    show: false
+                },
+                emphasis: {
+                    show: true
+                }
+            },
+            data:[]
+        },
+    ]
+};
+
 function get_node_list() {
     $.ajax({
         type: "GET",
@@ -44,13 +89,12 @@ function def_option(node, myChart) {
         title: {
             text: node,
             left: '0',
-            link:"https://github.com/SuPerCxyz/rain",
+            link:"/detail",
         },
         tooltip: {
             trigger: 'axis',
         },
         legend: {
-            // data: ['cpu', 'memcache', 'network', 'disk'],
             data: ['cpu', 'memcache'],
             bottom: 15,
         },
@@ -92,7 +136,7 @@ function def_option(node, myChart) {
     var datas = {}
     datas ={
         'nodes': node,
-        'count': 200
+        'count': 30,
     }
     $.ajax({
         type: "POST",
@@ -166,94 +210,161 @@ function node_status() {
                 span.style.whiteSpace="pre-wrap";
                 span.innerText='  ' + j.hostname + '_' + j.ip_address;
                 newdiv.append(span);
-                // var span1 = document.createElement("span");
-                // span1.style.fontFamily="font-family:Arial, Helvetica, sans-serif";
-                // span1.style.fontSize="20px";
-                // span1.style.verticalAlign="middle";
-                // span1.style.whiteSpace="pre-wrap";
-                // span1.style.display="block";
-                // var cpu_count=j.system_info.cpu.cpu_count
-                // var cpu_percent=j.system_info.cpu.cpu_percent
-                // var load=j.system_info.cpu.load_1
-                // span1.innerText='CPU  count:' + cpu_count + ', percent:' + cpu_percent + ', system load:' + load;
-                // newdiv.append(span1);
             })
         }
     }); 
 }
 
-function cpu_detail() {
-    var CPU = {
-        color: color_list,
-        // title: {
-        //     text: 'acer_121.237.51.0',
-        //     left: '0',
-        // },
-        tooltip: {
-            trigger: 'axis',
-        },
-        yAxis: [
-            {
-                type: 'value',  
-                axisLabel: {  
-                    show: true,  
-                    interval: 'auto',  
-                    formatter: '{value} %',
-                },
-                show: true,
-            }
-        ],
-        grid: {
-            top: '10',
-            left: '3%',
-            right: '1%',
-        },
-    }
-    var datas = {
-        'nodes': 'acer_121.237.51.0',
-        'count': 50
-    }
-    var cpu_seriess = new Array()
-    var count = 0
-    var legend_list = new Array()
-    $.ajax({
-        type:"POST",
-        url:"/cpu_detail",
-        data: JSON.stringify(datas),
-        dataType: "json", 
-        success: function(data){
-            $.each(data.cpu_detail.cpu_info, function(i, j) {
-                legend_list[count] = i;
-                var cpu_series = {
-                    name: i,
-                    type: 'line',
-                    showSymbol: false,
-                    data: j,
-                    smooth: 0.3,
-                };
-                cpu_seriess[count] = cpu_series;
-                count += 1;
-            });
-            CPU['legend'] = {
-                data: legend_list,
-                bottom: 0,
-            };
-            var x = [{
-                type: 'category',
-                boundaryGap: false,
-                data: data.cpu_detail.time,
-            }]
-            CPU['xAxis'] = x
-            CPU['series'] = cpu_seriess;
-            console.log(CPU['series'])
-            var newdiv = document.createElement("cpu");
-            newdiv.id='cpu';
-            newdiv.style.width="1500px";
-            newdiv.style.height="300px";
-            newdiv.style.cssFloat="left";
-            var dom1 = document.getElementById('cpu_detail').appendChild(newdiv);
-            var myChart = echarts.init(dom1);
-            myChart.setOption(CPU, true);
-        }
-    });
-}
+
+// function cpu_detail() {
+//     var tmp = {
+//         color: color_list,
+//         tooltip: {
+//             trigger: 'axis',
+//         },
+//         yAxis: [
+//             {
+//                 type: 'value',  
+//                 axisLabel: {  
+//                     show: true,  
+//                     interval: 'auto',  
+//                     formatter: '{value} %',
+//                 },
+//                 show: true,
+//             }
+//         ],
+//         grid: {
+//             top: '40',
+//             left: '3%',
+//             right: '1%',
+//         },
+//     }
+//     var CPU = Object.assign({}, tmp)
+//     var sys_load = Object.assign({}, tmp)
+//     var datas = {
+//         'nodes': 'acer_121.237.51.0',
+//         'count': 50
+//     }
+//     var cpu_seriess = new Array()
+//     var count = 0
+//     var legend_list = new Array()
+//     $.ajax({
+//         type:"POST",
+//         url:"/cpu_detail",
+//         data: JSON.stringify(datas),
+//         dataType: "json", 
+//         success: function(data){
+//             $.each(data.cpu_detail.cpu_info, function(i, j) {
+//                 legend_list[count] = i;
+//                 var cpu_series = {
+//                     name: i,
+//                     type: 'line',
+//                     showSymbol: false,
+//                     data: j,
+//                     smooth: 0.3,
+//                 };
+//                 cpu_seriess[count] = cpu_series;
+//                 count += 1;
+//             });
+//             CPU['legend'] = {
+//                 data: legend_list,
+//                 bottom: 0,
+//                 itemGap: 30,
+//             };
+//             CPU['xAxis'] = [{
+//                 type: 'category',
+//                 boundaryGap: false,
+//                 data: data.cpu_detail.time,
+//             }]
+//             CPU['series'] = cpu_seriess;
+//             CPU['title'] = {
+//                 text: 'Core usage',
+//                 left: '0',
+//             }
+//             var newdiv = document.createElement("cpu");
+//             newdiv.id='cpu';
+//             newdiv.style.width="1500px";
+//             newdiv.style.height="300px";
+//             newdiv.style.cssFloat="left";
+//             var dom1 = document.getElementById('cpu_detail').appendChild(newdiv);
+//             var myChart1 = echarts.init(dom1);
+//             myChart1.setOption(CPU, true);
+    
+
+//             var load_1 = data.cpu_detail.system_load.sys_load_1
+//             var load_5 = data.cpu_detail.system_load.sys_load_5
+//             var load_15 = data.cpu_detail.system_load.sys_load_15
+//             var load_series = [
+//                 {
+//                     name: 'load_1',
+//                     type: 'line',
+//                     showSymbol: false,
+//                     data: load_1,
+//                     smooth: 0.3,
+//                 },
+//                 {
+//                     name: 'load_5',
+//                     type: 'line',
+//                     showSymbol: false,
+//                     data: load_5,
+//                     smooth: 0.3,
+//                 },
+//                 {
+//                     name: 'load_15',
+//                     type: 'line',
+//                     showSymbol: false,
+//                     data: load_15,
+//                     smooth: 0.3,
+//                 },
+//             ]
+//             sys_load['legend'] = {
+//                 data: ['load_1', 'load_5', 'load_15'],
+//                 bottom: 0,
+//                 itemGap: 30,
+//             }
+//             sys_load['series'] = load_series
+//             sys_load['xAxis'] = [{
+//                 type: 'category',
+//                 boundaryGap: false,
+//                 data: data.cpu_detail.time,
+//             }]
+//             sys_load['title'] = {
+//                 text: 'System load',
+//                 left: '0',
+//             }
+//             var newdiv2 = document.createElement("sys_load");
+//             newdiv2.id='sys_load';
+//             newdiv2.style.width="1500px";
+//             newdiv2.style.height="300px";
+//             newdiv2.style.cssFloat="left";
+//             var dom2 = document.getElementById('cpu_detail').appendChild(newdiv2);
+//             var myChart2 = echarts.init(dom2);
+//             myChart2.setOption(sys_load, true);
+
+//             var cpu_detail_list = data.cpu_detail.cpu_detail_info
+//             $.each(cpu_detail_list, function(i, j) {
+//                 var cpu_pie = pie_tmp
+//                 one_result = cpu_detail_list[i]
+//                 cpu_pie.title['text'] = i
+//                 var uasge_data_list = new Array()
+//                 var test = 0
+//                 $.each(j, function(x, y) {
+//                     var uasge_data_dict = {}
+//                     uasge_data_dict['name'] = x
+//                     uasge_data_dict['value'] = y
+//                     test = test + 1
+//                     uasge_data_list[test] = uasge_data_dict
+//                 })
+//                 cpu_pie.series[0].data = uasge_data_list
+//                 var piediv = document.createElement('core_usage')
+//                 piediv.id='core_usage'
+//                 piediv.style.width='300px'
+//                 piediv.style.height='350px'
+//                 piediv.style.cssFloat='left'
+//                 var dom = document.getElementById('cpu_detail').appendChild(piediv)
+//                 var myChart = echarts.init(dom)
+//                 myChart.setOption(cpu_pie, true)
+//             })
+//         }
+//     });
+// }
