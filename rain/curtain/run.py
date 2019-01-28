@@ -168,5 +168,55 @@ def cpu():
         return jsonify(cpu_detail=result)
 
 
+@app.route('/sysoverview', methods=["POST"])
+def sysoverview():
+    if request.method == "POST":
+        node = request.get_json(force=True)['nodes']
+        mydb = monclient['rain']
+        mycol = mydb[node]
+        sys_info = mycol.find().sort('time', -1).limit(1).next()['system_info']['system_info']
+        ip = mycol.find().sort('time', -1).limit(1).next()['ip_address']
+        recode_time = sys_info['time']
+        timeArray = time.strptime(recode_time)
+        timestamp = int(time.mktime(timeArray))
+        if int(time.time()) - timestamp > 90:
+            sys_info['status'] = 'offline'
+        else:
+            sys_info['status'] = 'online'
+        sys_info['user_count'] = len(sys_info['user'])
+        sys_info['ip_address'] = ip
+        return jsonify(sys_info=sys_info)
+
+
+def mem_div(node, count):
+    mydb = monclient['rain']
+    mycol = mydb[node]
+    mem_dict = {
+        'mem_used': [],
+        'mem_bc': []
+    }
+    one_data = mycol.find().sort('time', -1).limit(1).next()['system_info']['memcache']
+    total = one_data['memcache_total_MB'] / 100
+    for data in mycol.find().sort("time", -1).limit(-count):
+        mem_dict['mem_used'].append(data['system_info']['memcache']['memcache_used_MB'] / total)
+        mem_dict['mem_bc'].append(data['system_info']['memcache']['memcache_cached_MB'] / total)
+    mem_dict['mem_used'].reverse()
+    mem_dict['mem_bc'].reverse()
+    
+    mem_dict = dict(mem_dict, **one_data)
+    mem_dict['time'] = recode_time(node, count)
+    return mem_dict
+
+
+@app.route('/mem_deatil', methods=["POST"])
+def mem_deatil():
+    if request.method == "POST":
+        req = request.get_json(force=True)
+        node = req['nodes']
+        count = int(req['count'])
+        mem_info = mem_div(node, count)
+        return jsonify(mem_info=mem_info)
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=82, debug=True)
