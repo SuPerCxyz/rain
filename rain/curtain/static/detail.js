@@ -43,7 +43,7 @@ var pie_tmp = {
         {
             name:'Core usage',
             type:'pie',
-            radius : [50, 120],
+            radius : [40, 95],
             center : '50%',
             roseType : 'radareaius',
             label: {
@@ -147,10 +147,7 @@ function sysoverview() {
 
 
 function cpu_detail() {
-    var req = GetRequest()
-    var nodes = req['nodes']
-    var counts = req['count']
-    var tmp = {
+    var cpu_tmp = {
         color: color_list,
         tooltip: {
             trigger: 'axis',
@@ -172,8 +169,11 @@ function cpu_detail() {
             right: '30',
         },
     }
-    var CPU = Object.assign({}, tmp)
-    var sys_load = Object.assign({}, tmp)
+    var req = GetRequest()
+    var nodes = req['nodes']
+    var counts = req['count']
+    var CPU = Object.assign({}, cpu_tmp)
+    var sys_load = Object.assign({}, cpu_tmp)
     var datas = {
         'nodes': nodes,
         'count': counts,
@@ -214,7 +214,7 @@ function cpu_detail() {
                 text: 'Core usage',
                 left: '0',
             }
-            var newdiv = document.createElement("cpu");
+            var newdiv = document.createElement("div");
             newdiv.id='cpu';
             newdiv.style.width="750px";
             newdiv.style.height="300px";
@@ -265,7 +265,7 @@ function cpu_detail() {
                 text: 'System load',
                 left: '0',
             }
-            var newdiv2 = document.createElement("sys_load");
+            var newdiv2 = document.createElement("div");
             newdiv2.id='sys_load';
             newdiv2.style.width="750px";
             newdiv2.style.height="300px";
@@ -289,10 +289,10 @@ function cpu_detail() {
                     uasge_data_list[test] = uasge_data_dict
                 })
                 cpu_pie.series[0].data = uasge_data_list
-                var piediv = document.createElement('core_usage')
+                var piediv = document.createElement('div')
                 piediv.id='core_usage'
-                piediv.style.width='375px'
-                piediv.style.height='350px'
+                piediv.style.width='300px'
+                piediv.style.height='300px'
                 piediv.style.cssFloat='left'
                 var dom = document.getElementById('cpu_detail').appendChild(piediv)
                 var myChart = echarts.init(dom)
@@ -373,7 +373,7 @@ function mem_detail() {
                 left: '0',
                 subtext: 'Total: ' + mem_total + '(MB) Used: ' + mem_used + '(MB) Available: ' + mem_avail + '(MB).'
             }
-            var newdiv1 = document.createElement("mem")
+            var newdiv1 = document.createElement("div")
             newdiv1.id='mem'
             newdiv1.style.width="1100px"
             newdiv1.style.height="400px"
@@ -431,7 +431,7 @@ function mem_detail() {
                     },
                 ]
             }
-            var newdiv2 = document.createElement("mem_pie")
+            var newdiv2 = document.createElement("div")
             newdiv2.id='mem_pie'
             newdiv2.style.width="400px"
             newdiv2.style.height="400px"
@@ -440,5 +440,119 @@ function mem_detail() {
             var myChart2 = echarts.init(dom2);
             myChart2.setOption(mem_pie, true);
         }
+    })
+}
+
+
+function net_detail() {
+    var net_tmp = {
+        color: color_list,
+        tooltip: {
+            trigger: 'axis',
+        },
+        yAxis: [
+            {
+                type: 'value',
+                show: true,
+            }
+        ],
+        grid: {
+            top: '40',
+            left: '50',
+            right: '30',
+        },
+    }
+    var req = GetRequest()
+    var nodes = req['nodes']
+    var counts = req['count']
+    var datas = {
+        'nodes': nodes,
+        'count': counts,
+    }
+    var in_legend_list = new Array()
+    var in_seriess = new Array()
+    var out_legend_list = new Array()
+    var out_seriess = new Array()
+    var new_tmp = Object.assign({}, net_tmp)
+    // delete new_tmp['yAxis'][0]['axisLabel']
+    $.ajax({
+        type:"POST",
+        url:"/net_detail",
+        data: JSON.stringify(datas),
+        dataType: "json", 
+        success: function(data) {
+            var in_data = data.net_in
+            var out_data = data.net_out
+            new_tmp['xAxis'] = [{
+                type: 'category',
+                boundaryGap: false,
+                data: data.times,
+            }]
+            var in_line = Object.assign({}, new_tmp)
+            var count = 0
+            $.each(in_data, function(i, j) {
+                in_legend_list[count] = i
+                var in_series = {
+                    name: i,
+                    type: 'line',
+                    showSymbol: false,
+                    data: j,
+                    smooth: 0.3,
+                }
+                in_seriess[count] = in_series
+                count += 1
+            })
+            in_line['series'] = in_seriess
+            in_line['legend'] = {
+                data: in_legend_list,
+                bottom: 0,
+                itemGap: 0,
+            }
+            in_line['title'] = {
+                text: 'Network traffic in(KB).',
+                left: '0',
+            }
+            var newdiv1 = document.createElement("div")
+            newdiv1.id='net_in'
+            newdiv1.style.width="750px"
+            newdiv1.style.height="300px";
+            newdiv1.style.cssFloat="left";
+            var dom1 = document.getElementById('net_detail').appendChild(newdiv1);
+            var myChart1 = echarts.init(dom1);
+            myChart1.setOption(in_line, true);
+
+            var out_line = Object.assign({}, new_tmp)
+            var count = 0
+            $.each(out_data, function(i, j) {
+                out_legend_list[count] = i
+                var out_series = {
+                    name: i,
+                    type: 'line',
+                    showSymbol: false,
+                    data: j,
+                    smooth: 0.3,
+                }
+                out_seriess[count] = out_series
+                count += 1
+            })
+            out_line['series'] = out_seriess
+            out_line['legend'] = {
+                data: out_legend_list,
+                bottom: 0,
+                itemGap: 0,
+            }
+            out_line['title'] = {
+                text: 'Network traffic out(KB).',
+                left: '0',
+            }
+            var newdiv2 = document.createElement("div")
+            newdiv2.id='net_out'
+            newdiv2.style.width="750px"
+            newdiv2.style.height="300px";
+            newdiv2.style.cssFloat="left";
+            var dom2 = document.getElementById('net_detail').appendChild(newdiv2);
+            var myChart2 = echarts.init(dom2);
+            myChart2.setOption(out_line, true);
+    }
     })
 }

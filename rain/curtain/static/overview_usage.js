@@ -89,7 +89,7 @@ function def_option(node, myChart) {
         title: {
             text: node,
             left: '0',
-            link:"/detail",
+            link:"/detail?nodes=" + node + '&count=200',
         },
         tooltip: {
             trigger: 'axis',
@@ -108,7 +108,7 @@ function def_option(node, myChart) {
         yAxis: [
             {
                 type: 'value',  
-                axisLabel: {  
+                axisLabel: {
                     show: true,  
                     interval: 'auto',  
                     formatter: '{value} %'

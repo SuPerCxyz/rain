@@ -35,16 +35,16 @@ class NetworkInfo(object):
         total_sent = 0
         time1_net = psutil.net_io_counters(pernic=True)
         time.sleep(1)
-        time1_net = psutil.net_io_counters(pernic=True)
+        time2_net = psutil.net_io_counters(pernic=True)
         for net_card in net_list:
             net_io_count_1 = time1_net[net_card]
             r1 = net_io_count_1.bytes_recv
             s1 = net_io_count_1.bytes_sent
-            net_io_count_2 = time1_net[net_card]
+            net_io_count_2 = time2_net[net_card]
             r2 = net_io_count_2.bytes_recv
             s2 = net_io_count_2.bytes_sent
-            net_recv = (r2 - r1) / (1024 ** 2)
-            net_sent = (s2 - s1) / (1024 ** 2)
+            net_recv = (r2 - r1) / 1024
+            net_sent = (s2 - s1) / 1024
             net_info = {
                 'net_card': net_card,
                 'net_recv(MB)': net_recv,
@@ -86,7 +86,6 @@ class NetworkInfo(object):
                         'remote_addr': {},
                         'status': connect_info.status,
                         'pid': connect_info.pid,
-                        'remote_addr': {},
                         'process_info': {},
                     }
                     if connect_info.raddr:

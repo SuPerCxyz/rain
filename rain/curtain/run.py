@@ -174,7 +174,8 @@ def sysoverview():
         node = request.get_json(force=True)['nodes']
         mydb = monclient['rain']
         mycol = mydb[node]
-        sys_info = mycol.find().sort('time', -1).limit(1).next()['system_info']['system_info']
+        sys_info = mycol.find().sort('time', -1).limit(1).next() \
+            ['system_info']['system_info']
         ip = mycol.find().sort('time', -1).limit(1).next()['ip_address']
         recode_time = sys_info['time']
         timeArray = time.strptime(recode_time)
@@ -195,11 +196,14 @@ def mem_div(node, count):
         'mem_used': [],
         'mem_bc': []
     }
-    one_data = mycol.find().sort('time', -1).limit(1).next()['system_info']['memcache']
+    one_data = mycol.find().sort('time', -1).limit(1).next() \
+        ['system_info']['memcache']
     total = one_data['memcache_total_MB'] / 100
     for data in mycol.find().sort("time", -1).limit(-count):
-        mem_dict['mem_used'].append(data['system_info']['memcache']['memcache_used_MB'] / total)
-        mem_dict['mem_bc'].append(data['system_info']['memcache']['memcache_cached_MB'] / total)
+        mem_dict['mem_used'].append(
+            data['system_info']['memcache']['memcache_used_MB'] / total)
+        mem_dict['mem_bc'].append(
+            data['system_info']['memcache']['memcache_cached_MB'] / total)
     mem_dict['mem_used'].reverse()
     mem_dict['mem_bc'].reverse()
     
@@ -217,6 +221,42 @@ def mem_deatil():
         mem_info = mem_div(node, count)
         return jsonify(mem_info=mem_info)
 
+
+def net_div(node, count):
+    mydb = monclient['rain']
+    mycol = mydb[node]
+    net_dict_in = {}
+    net_dict_out = {}
+    net_dict_in['total_traffic'] = []
+    net_dict_out['total_traffic'] = []
+    one_data = mycol.find().sort('time', -1).limit(1).next() \
+        ['network_info']['network_traffic']['single_traffic']
+    for card_name in one_data:
+        net_dict_in[card_name['net_card']] = []
+        net_dict_out[card_name['net_card']] = []
+    for info in mycol.find().sort("time", -1).limit(-count):
+        net_info = info['network_info']['network_traffic']
+        net_dict_in['total_traffic'].append(
+            net_info['total_traffic']['total_recv(MB)'])
+        net_dict_out['total_traffic'].append(
+            net_info['total_traffic']['total_sent(MB)'])
+        for single in net_info['single_traffic']:
+            net_dict_in[single['net_card']].append(single['net_recv(MB)'])
+            net_dict_out[single['net_card']].append(single['net_sent(MB)'])
+    for i in net_dict_in.keys():
+        net_dict_in[i].reverse()
+        net_dict_out[i].reverse()
+    return net_dict_in, net_dict_out
+
+
+@app.route('/net_detail', methods=['POST'])
+def net_detail():
+    req = request.get_json(force=True)
+    node = req['nodes']
+    count = int(req['count'])
+    net_in, net_out= net_div(node, count)
+    time_list = recode_time(node, count)
+    return jsonify(net_in=net_in, net_out=net_out, times=time_list)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=82, debug=True)
