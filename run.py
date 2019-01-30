@@ -1,23 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*
 
-import sys
 import time
-
-from rain.cloud import sum_info
-from rain.cloud import socket_client
 
 
 def client():
     from rain.cloud import sum_info
     from rain.cloud import socket_client
+
     sum_init=sum_info.SumInfo()
     socket_cl=socket_client.SocketClient()
 
     while True:
-        result=sum_init.sum_info()
-        socket_cl.send_data(result)
-        time.sleep(30)
+        try:
+            result=sum_init.sum_info()
+            socket_cl.send_data(result)
+            time.sleep(30)
+        except:
+            pass
 
 
 def server():

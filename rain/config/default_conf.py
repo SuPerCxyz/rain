@@ -32,6 +32,12 @@ default_opt_opts = [
     cfg.StrOpt('mongo_port',
                default='27017',
                help='Mongodb port'),
+    cfg.StrOpt('client',
+               default='',
+               help='Client',),
+    cfg.StrOpt('server',
+               default='',
+               help='Server.'),
 ]
 
 CONF = cfg.CONF
