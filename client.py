@@ -8,6 +8,9 @@ from func_timeout import func_set_timeout
 from rain.cloud import sum_info
 from rain.cloud import socket_client
 
+sum_init=sum_info.SumInfo()
+socket_cl=socket_client.SocketClient()
+
 
 @func_set_timeout(3)
 def get_data():
@@ -18,9 +21,6 @@ def get_data():
         return None
 
 def client():
-
-    sum_init=sum_info.SumInfo()
-    socket_cl=socket_client.SocketClient()
 
     while True:
         try:
