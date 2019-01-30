@@ -59,7 +59,7 @@ class ScoketServer(object):
                 break
             if recv == 'error':
                 # conn.close()
-                break
+                return
 
         # Verify the data and send it to mongodb if it succeeds.
         loop = CONF.DEFAULT.socket_retry

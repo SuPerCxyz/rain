@@ -137,7 +137,7 @@ function sysoverview() {
             c2.append('IP: ' + data.sys_info.ip_address)
             c3.append('Status: ' + data.sys_info.status)
             c4.append('Online user count: ' + data.sys_info.user_count)
-            c5.append('Now time: ' + data.sys_info.time)
+            c5.append('Recode time: ' + data.sys_info.time)
             c6.append('Boot time: ' + data.sys_info.boot_time)
             c7.append('Kernel info: ' + data.sys_info.system_info)
             document.getElementById('sysoverview1').appendChild(a1)

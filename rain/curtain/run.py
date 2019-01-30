@@ -180,6 +180,7 @@ def sysoverview():
         recode_time = sys_info['time']
         timeArray = time.strptime(recode_time)
         timestamp = int(time.mktime(timeArray))
+        sys_info['time'] = time.strftime("%Y-%m-%d %H:%M:%S", timeArray)
         if int(time.time()) - timestamp > 90:
             sys_info['status'] = 'offline'
         else:

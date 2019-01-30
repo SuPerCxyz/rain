@@ -45,8 +45,8 @@ class SocketClient(object):
                 else:
                     loop -= 1
                     logger.warning('Data length verification failed and '
-                                're-verification. remaining times: {}.'
-                                .format(loop - 1))
+                                   're-verification. remaining times: {}.'
+                                   .format(loop - 1))
                 if loop == 0:
                     client.send('error')
                     logger.error('Data length check error, end sending data.')
