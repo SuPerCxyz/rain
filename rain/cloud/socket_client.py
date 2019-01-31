@@ -3,7 +3,6 @@
 
 import json
 import socket
-import time
 
 from rain.common import rain_log
 from rain.config import default_conf
@@ -47,7 +46,6 @@ class SocketClient(object):
                     break
                 else:
                     loop -= 1
-                    time.sleep(1)
                     logger.warning('Data length verification failed and '
                                    're-verification. remaining times: {}.'
                                    .format(loop - 1))
@@ -70,7 +68,6 @@ class SocketClient(object):
             while loop:
                 message = client.recv(1024000)
                 if message == 'Retry':
-                    time.sleep(1)
                     client.send(data)
                     logger.warning('Data verification failed and '
                                    're-verification. remaining times: {}.'

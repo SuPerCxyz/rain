@@ -5,7 +5,6 @@ import json
 import socket
 import sys
 import threading
-import time
 
 from rain.common import rain_log
 from rain.config import default_conf
@@ -76,6 +75,5 @@ class ScoketServer(object):
             else:
                 conn.send('Retry')
                 logger.warning('Did not receive full data from {}.'.format(addr))
-            time.sleep(0.3)
             loop -= 1
         # conn.close()

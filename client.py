@@ -11,10 +11,13 @@ from rain.cloud import socket_client
 
 @func_set_timeout(60)
 def get_data():
-    sum_init = sum_info.SumInfo()
-    socket_cl = socket_client.SocketClient()
-    result = sum_init.sum_info()
-    socket_cl.send_data(result)
+    try:
+        sum_init = sum_info.SumInfo()
+        socket_cl = socket_client.SocketClient()
+        result = sum_init.sum_info()
+        socket_cl.send_data(result)
+    except Exception as e:
+        print e
 
 
 def client():
