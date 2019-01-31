@@ -53,6 +53,7 @@ class ScoketServer(object):
         # Verify data length.
         while True:
             recv = conn.recv(1024)
+            logger.info(recv)
             if 'send_len:' in recv:
                 conn.send(recv)
                 lens = recv[9:]
@@ -85,5 +86,6 @@ class ScoketServer(object):
                 logger.warning('Did not receive full data from {}.'
                                .format(addr))
             loop -= 1
-        conn.close()
-        logger.error('Failed to receive data.')
+        else:
+            conn.close()
+            logger.error('Failed to receive data.')

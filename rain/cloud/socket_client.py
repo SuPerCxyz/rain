@@ -70,7 +70,6 @@ class SocketClient(object):
             time.sleep(0.1)
             client.send('rain_socket_send')
             message = client.recv(1024)
-            print message
             if message == 'complete':
                 logger.info('The socket server successfully received the '
                             'data.')
@@ -81,5 +80,6 @@ class SocketClient(object):
                 logger.warning('Data verification failed and '
                                 're-verification. remaining times: {}.'
                                 .format(loop - 1))
-        client.close()
-        logger.error('Failed to send data.')
+        else:
+            client.close()
+            logger.error('Failed to send data.')
