@@ -52,7 +52,7 @@ class ScoketServer(object):
 
         # Verify data length.
         while True:
-            recv = conn.recv(1024000)
+            recv = conn.recv(1024)
             if 'send_len:' in recv:
                 conn.send(recv)
                 lens = recv[9:]
@@ -62,18 +62,40 @@ class ScoketServer(object):
                 return
 
         # Verify the data and send it to mongodb if it succeeds.
-        while True:
-            recv = conn.recv(1024000)
-            if recv == 'exit' or not recv:
-                logger.info('Disconnect from {}.'.format(addr))
+        loop = CONF.DEFAULT.socket_retry
+        while loop:
+            data = ''
+            while True:
+                recv = conn.recv(1024)
+                if recv == 'rain_socket_send':
+                    logger.info('Received all data.')
+                    break
+                if not recv:
+                    break
+                data += recv
+            if len(data) == int(lens):
+                conn.send('complete')
+                logger.info('Data verification completed')
+                self.mongodb.rain_insert_data(data, addr[0])
+                logger.info('Data insertion database completed, from {}.'
+                            .format(addr))
                 break
-            if str(len(recv)) == lens:
-                self.mongodb.rain_insert_data(recv, addr[0])
-                conn.send('Successfully received data.')
-                logger.info('Successfully received from {}.'.format(addr))
-                break
-            if recv:
-                conn.send('Retry')
+            else:
+                conn.send('incomplete')
                 logger.warning('Did not receive full data from {}.'
                                .format(addr))
+            loop -= 1
+            # if recv == 'exit' or not recv:
+            #     logger.info('Disconnect from {}.'.format(addr))
+            #     break
+            # if str(len(recv)) == lens:
+            #     self.mongodb.rain_insert_data(recv, addr[0])
+            #     conn.send('Successfully received data.')
+            #     logger.info('Successfully received from {}.'.format(addr))
+            #     break
+            # if recv:
+            #     conn.send('Retry')
+            #     logger.warning('Did not receive full data from {}.'
+            #                    .format(addr))
         conn.close()
+        logger.error('Failed to receive data.')

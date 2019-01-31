@@ -41,7 +41,7 @@ class SocketClient(object):
         try:
             while loop:
                 client.send(lens)
-                if lens == client.recv(1024000):
+                if lens == client.recv(1024):
                     logger.info('The data length verification is successful '
                                 'and the length is: {}.'
                                 .format(str(len(data))))
@@ -65,28 +65,21 @@ class SocketClient(object):
         # Send data and verify that the server receives it correctly, and
         # resend it when it receives 'Retry'.
         loop = CONF.DEFAULT.socket_retry
-        client.send(data)
-        try:
-            while loop:
-                message = client.recv(1024000)
-                logger.warning(message)
-                if 'Successfully' in message:
-                    logger.info('The socket server successfully received the '
-                                'data.')
-                    client.send('exit')
-                    break
-                if 'Retry' in message:
-                    client.send(data)
-                    logger.warning('Data verification failed and '
-                                   're-verification. remaining times: {}.'
-                                   .format(loop - 1))
-                    loop -= 1
-                if loop == 0:
-                    logger.error('Failed to send data.')
-                time.sleep(0.5)
-            client.close()
-        except Exception as e:
-            logger.error(e)
-            logger.error('Data transfer check failed.')
-            client.close()
-            return
+        while loop:
+            client.send(data)
+            time.sleep(0.1)
+            client.send('rain_socket_send')
+            message = client.recv(1024)
+            print message
+            if message == 'complete':
+                logger.info('The socket server successfully received the '
+                            'data.')
+                client.close()
+                break
+            elif message == 'incomplete':
+                loop -= 1
+                logger.warning('Data verification failed and '
+                                're-verification. remaining times: {}.'
+                                .format(loop - 1))
+        client.close()
+        logger.error('Failed to send data.')
