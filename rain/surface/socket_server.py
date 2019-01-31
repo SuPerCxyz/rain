@@ -57,7 +57,7 @@ class ScoketServer(object):
                 lens = recv[9:]
                 break
             if recv == 'error':
-                # conn.close()
+                conn.close()
                 return
 
         # Verify the data and send it to mongodb if it succeeds.
@@ -76,4 +76,4 @@ class ScoketServer(object):
                 conn.send('Retry')
                 logger.warning('Did not receive full data from {}.'.format(addr))
             loop -= 1
-        # conn.close()
+        conn.close()
