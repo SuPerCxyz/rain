@@ -85,17 +85,5 @@ class ScoketServer(object):
                 logger.warning('Did not receive full data from {}.'
                                .format(addr))
             loop -= 1
-            # if recv == 'exit' or not recv:
-            #     logger.info('Disconnect from {}.'.format(addr))
-            #     break
-            # if str(len(recv)) == lens:
-            #     self.mongodb.rain_insert_data(recv, addr[0])
-            #     conn.send('Successfully received data.')
-            #     logger.info('Successfully received from {}.'.format(addr))
-            #     break
-            # if recv:
-            #     conn.send('Retry')
-            #     logger.warning('Did not receive full data from {}.'
-            #                    .format(addr))
         conn.close()
         logger.error('Failed to receive data.')
