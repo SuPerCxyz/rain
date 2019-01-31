@@ -26,7 +26,7 @@ class SocketClient(object):
             address = CONF.DEFAULT.address
             port = CONF.DEFAULT.port
             client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            client.settimeout(10)
+            client.settimeout(30)
             client.connect((address, port))
             data = json.dumps(data)
         except Exception as e:
@@ -69,19 +69,21 @@ class SocketClient(object):
         try:
             while loop:
                 message = client.recv(1024000)
-                if message == 'Retry':
-                    client.send(data)
-                    logger.warning('Data verification failed and '
-                                   're-verification. remaining times: {}.'
-                                   .format(loop - 1))
-                    loop -= 1
+                logger.warning(message)
                 if 'Successfully' in message:
                     logger.info('The socket server successfully received the '
                                 'data.')
                     client.send('exit')
                     break
+                if 'Retry' in message:
+                    client.send(data)
+                    logger.warning('Data verification failed and '
+                                   're-verification. remaining times: {}.'
+                                   .format(loop - 1))
+                    loop -= 1
                 if loop == 0:
                     logger.error('Failed to send data.')
+                time.sleep(0.5)
             client.close()
         except Exception as e:
             logger.error(e)

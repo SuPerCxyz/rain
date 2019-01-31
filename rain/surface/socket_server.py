@@ -62,8 +62,7 @@ class ScoketServer(object):
                 return
 
         # Verify the data and send it to mongodb if it succeeds.
-        old_time = int(time.time())
-        while (int(time.time()) - old_time) < 30:
+        while True:
             recv = conn.recv(1024000)
             if recv == 'exit' or not recv:
                 logger.info('Disconnect from {}.'.format(addr))
@@ -73,7 +72,7 @@ class ScoketServer(object):
                 conn.send('Successfully received data.')
                 logger.info('Successfully received from {}.'.format(addr))
                 break
-            else:
+            if recv:
                 conn.send('Retry')
                 logger.warning('Did not receive full data from {}.'
                                .format(addr))
