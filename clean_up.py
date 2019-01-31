@@ -5,6 +5,7 @@ import time
 
 import pymongo
 
+
 def clean_up_mongo():
     conn_link = 'mongodb://127.0.0.1:27017/'
     monclient = pymongo.MongoClient(conn_link)
@@ -18,6 +19,6 @@ def clean_up_mongo():
         if (now_time - recode_time) > 0:
             mydb.drop_collection(col_name)
 
-        
+
 if __name__ == "__main__":
     clean_up_mongo()

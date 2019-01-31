@@ -27,8 +27,9 @@ class SocketClient(object):
             client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             client.connect((address, port))
             data = json.dumps(data)
-        except:
+        except Exception:
             logger.error('Failed to connect to the server.')
+            logger.error(Exception)
             return
 
         # Send data length and verify that the server receives correctly,
@@ -39,11 +40,13 @@ class SocketClient(object):
             while loop:
                 client.send(lens)
                 if lens == client.recv(1024000):
-                    logger.info('The data length verification is successful and '
-                                'the length is: {}.'.format(str(len(data))))
+                    logger.info('The data length verification is successful '
+                                'and the length is: {}.'
+                                .format(str(len(data))))
                     break
                 else:
                     loop -= 1
+                    time.sleep(1)
                     logger.warning('Data length verification failed and '
                                    're-verification. remaining times: {}.'
                                    .format(loop - 1))
@@ -52,7 +55,8 @@ class SocketClient(object):
                     logger.error('Data length check error, end sending data.')
                     client.close()
                     return
-        except:
+        except Exception:
+            logger.error(Exception)
             logger.error('Data length check failed.')
             client.close()
             return
@@ -65,17 +69,22 @@ class SocketClient(object):
             while loop:
                 message = client.recv(1024000)
                 if message == 'Retry':
+                    time.sleep(1)
                     client.send(data)
-                    logger.warning('Data verification failed and re-verification. '
-                                'remaining times: {}.'.format(loop - 1))
+                    logger.warning('Data verification failed and '
+                                   're-verification. remaining times: {}.'
+                                   .format(loop - 1))
                     loop -= 1
                 if 'Successfully' in message:
                     logger.info('The socket server successfully received the '
                                 'data.')
                     client.send('exit')
                     break
+                if loop == 0:
+                    logger.error('Failed to send data.')
             client.close()
-        except:
+        except Exception:
+            logger.error(Exception)
             logger.error('Data transfer check failed.')
             client.close()
             return
