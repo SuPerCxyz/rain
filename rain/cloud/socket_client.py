@@ -3,6 +3,7 @@
 
 import json
 import socket
+import time
 
 from rain.common import rain_log
 from rain.config import default_conf
@@ -27,9 +28,9 @@ class SocketClient(object):
             client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             client.connect((address, port))
             data = json.dumps(data)
-        except Exception:
+        except Exception as e:
             logger.error('Failed to connect to the server.')
-            logger.error(Exception)
+            logger.error(e)
             return
 
         # Send data length and verify that the server receives correctly,
@@ -55,8 +56,8 @@ class SocketClient(object):
                     logger.error('Data length check error, end sending data.')
                     client.close()
                     return
-        except Exception:
-            logger.error(Exception)
+        except Exception as e:
+            logger.error(e)
             logger.error('Data length check failed.')
             client.close()
             return
@@ -83,8 +84,8 @@ class SocketClient(object):
                 if loop == 0:
                     logger.error('Failed to send data.')
             client.close()
-        except Exception:
-            logger.error(Exception)
+        except Exception as e:
+            logger.error(e)
             logger.error('Data transfer check failed.')
             client.close()
             return
