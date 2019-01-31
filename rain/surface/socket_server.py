@@ -5,6 +5,7 @@ import json
 import socket
 import sys
 import threading
+import time
 
 from rain.common import rain_log
 from rain.config import default_conf
@@ -61,8 +62,8 @@ class ScoketServer(object):
                 return
 
         # Verify the data and send it to mongodb if it succeeds.
-        loop = CONF.DEFAULT.socket_retry
-        while loop:
+        old_time = int(time.time())
+        while (int(time.time()) - old_time) < 30:
             recv = conn.recv(1024000)
             if recv == 'exit' or not recv:
                 logger.info('Disconnect from {}.'.format(addr))
@@ -74,6 +75,6 @@ class ScoketServer(object):
                 break
             else:
                 conn.send('Retry')
-                logger.warning('Did not receive full data from {}.'.format(addr))
-            loop -= 1
+                logger.warning('Did not receive full data from {}.'
+                               .format(addr))
         conn.close()

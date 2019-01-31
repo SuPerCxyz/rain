@@ -3,6 +3,7 @@
 
 import json
 import socket
+import time
 
 from rain.common import rain_log
 from rain.config import default_conf
@@ -25,6 +26,7 @@ class SocketClient(object):
             address = CONF.DEFAULT.address
             port = CONF.DEFAULT.port
             client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            client.settimeout(10)
             client.connect((address, port))
             data = json.dumps(data)
         except Exception as e:

@@ -21,6 +21,7 @@ def client():
                     socket_cl.send_data(result)
                 except Exception as e:
                     print e
+                    pass
             get_data()
             time.sleep(30)
         except Exception as e:
