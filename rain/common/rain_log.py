@@ -3,6 +3,7 @@
 
 import json
 import logging
+import os
 import subprocess
 import time
 
@@ -13,6 +14,10 @@ from rain.config import default_conf
 CONF = default_conf.CONF
 log_path = CONF.DEFAULT.log_path
 
+if not os.path.exists(log_path):
+    os.makedirs(log_path, 755)
+    os.remove(log_path)
+    os.mknod(log_path)
 
 def logg(name):
     logger = logging.getLogger(name)
