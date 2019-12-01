@@ -5,7 +5,7 @@ import os
 
 from oslo_config import cfg
 
-path = os.getcwd()
+path = os.path.split(os.path.realpath(__file__))[0]
 
 default_opt = cfg.OptGroup(name='DEFAULT',
                            title='default options',
